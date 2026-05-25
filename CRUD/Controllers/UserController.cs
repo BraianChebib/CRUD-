@@ -4,19 +4,20 @@ using CRUD.Services;
 
 namespace CRUD.Controllers
 {
-    [ApiController]
-    [Route("api/users")]
-    public class UserController : ControllerBase
+    [ApiController]                              
+    [Route("api/users")]                              
+
+    public class UserController : ControllerBase      
     {
         private readonly UserService _service;
 
-        public UserController(UserService service)
+        public UserController(UserService service)   
         {
             _service = service;
         }
-
-        [HttpGet]
-        public IActionResult Get()
+                             
+        [HttpGet]                                   
+        public IActionResult Get()                   
         {
             return Ok(_service.GetAll());
         }

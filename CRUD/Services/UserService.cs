@@ -7,30 +7,31 @@ namespace CRUD.Services
     {
         private readonly AppDbContext _context;
 
-        public UserService(AppDbContext context)
+        public UserService(AppDbContext context)  
         {
-            _context = context;
+            _context = context;                  
         }
 
         public List<User> GetAll()
         {
-            return _context.Users.ToList();
+            return _context.Users.ToList();  
         }
 
         public User Create(User user)
         {
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            _context.Users.Add(user);  
+            _context.SaveChanges();     
             return user;
         }
 
-        public User Update(int id, User updatedUser)
+        public User? Update(int id, User updatedUser)
         {
             var user = _context.Users.Find(id);
-            if (user == null) return null;
+            if (user == null) return null;       
 
-            user.Name = updatedUser.Name;
-            user.Email = updatedUser.Email;
+            user.Nombre = updatedUser.Nombre;
+            user.Dni = updatedUser.Dni;
+            user.Rol = updatedUser.Rol;
 
             _context.SaveChanges();
             return user;
