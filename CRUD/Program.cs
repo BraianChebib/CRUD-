@@ -12,9 +12,9 @@ builder.Services.AddControllers()
     }); 
 
 builder.Services.AddEndpointsApiExplorer(); 
-builder.Services.AddSwaggerGen();           
+builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<AppDbContext>(options => 
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         new MySqlServerVersion(new Version(8, 0, 36))
@@ -22,6 +22,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ProveedorService>();
 builder.Services.AddScoped<ArticuloService>();
 builder.Services.AddScoped<PedidoService>();
