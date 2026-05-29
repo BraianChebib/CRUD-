@@ -16,8 +16,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        new MySqlServerVersion(new Version(8, 0, 36))
+        "server=localhost;database=crud_db;user=root;password=",
+        new MySqlServerVersion(new Version(10, 4, 32))
     )
 );
 
