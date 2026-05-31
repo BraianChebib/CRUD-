@@ -14,11 +14,18 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer(); 
 builder.Services.AddSwaggerGen();
 
+// Intentamos leer la conexión del archivo JSON
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Si estás en tu compu local y el JSON falla o viene vacío,
+// le clavamos la conexión genérica sin contraseña a la fuerza.
+if (string.IsNullOrEmpty(connectionString) || connectionString.Contains("root"))
+{
+    connectionString = "Server=localhost;Database=crud_db;Uid=root;Pwd=;";
+}
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(
-        "server=localhost;database=crud_db;user=root;password=",
-        new MySqlServerVersion(new Version(10, 4, 32))
-    )
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(10, 4, 32)))
 );
 
 builder.Services.AddScoped<UserService>();
