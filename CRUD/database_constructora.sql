@@ -1,6 +1,6 @@
 CREATE DATABASE IF NOT EXISTS crud_db
     CHARACTER SET utf8mb4
-    COLLATE utf8mb4_0900_ai_ci;
+    COLLATE utf8mb4_general_ci;
 
 USE crud_db;
 
@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS Users (
     Nombre VARCHAR(100) NOT NULL,
     Dni VARCHAR(20) NOT NULL,
     Rol VARCHAR(50) NOT NULL,
+    Clave VARCHAR(255) NOT NULL,
     PRIMARY KEY (Id),
     UNIQUE KEY IX_Users_Dni (Dni)
 );

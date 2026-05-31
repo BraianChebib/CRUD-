@@ -12,21 +12,30 @@ builder.Services.AddControllers()
     }); 
 
 builder.Services.AddEndpointsApiExplorer(); 
-builder.Services.AddSwaggerGen();           
+builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<AppDbContext>(options => 
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        new MySqlServerVersion(new Version(8, 0, 36))
-    )
+// Intentamos leer la conexión del archivo JSON
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Si estás en tu compu local y el JSON falla o viene vacío,
+// le clavamos la conexión genérica sin contraseña a la fuerza.
+if (string.IsNullOrEmpty(connectionString) || connectionString.Contains("root"))
+{
+    connectionString = "Server=localhost;Database=crud_db;Uid=root;Pwd=;";
+}
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(10, 4, 32)))
 );
 
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ProveedorService>();
 builder.Services.AddScoped<ArticuloService>();
 builder.Services.AddScoped<PedidoService>();
 builder.Services.AddScoped<PedidoDetalleService>();
 builder.Services.AddScoped<OrdenCompraService>();
+builder.Services.AddScoped<OrdenCompraDetalleService>();
 
 var app = builder.Build();                 
 
