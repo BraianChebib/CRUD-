@@ -13,6 +13,7 @@ namespace CRUD.Data
         public DbSet<Pedido> Pedidos {get; set;}
         public DbSet<PedidoDetalle> PedidoDetalles {get; set;}
         public DbSet<OrdenCompra> OrdenesCompra {get; set;}
+        public DbSet<OrdenCompraDetalle> OrdenCompraDetalles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

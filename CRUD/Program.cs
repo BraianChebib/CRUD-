@@ -35,6 +35,7 @@ builder.Services.AddScoped<ArticuloService>();
 builder.Services.AddScoped<PedidoService>();
 builder.Services.AddScoped<PedidoDetalleService>();
 builder.Services.AddScoped<OrdenCompraService>();
+builder.Services.AddScoped<OrdenCompraDetalleService>();
 
 var app = builder.Build();                 
 
