@@ -3,6 +3,7 @@ using CRUD.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
@@ -13,6 +14,7 @@ builder.Services.AddControllers()
 
 builder.Services.AddEndpointsApiExplorer(); 
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllersWithViews();
 
 // Intentamos leer la conexión del archivo JSON
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -45,8 +47,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();   
 }
 
-app.UseHttpsRedirection();                 
+app.UseHttpsRedirection();
 
-app.MapControllers();                      
+app.UseStaticFiles();
+
+app.MapControllers();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();                                 
