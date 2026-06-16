@@ -1,0 +1,61 @@
+﻿@{
+    Layout = null; // Desactivamos el layout general
+    ViewData["Title"] = "Login - SIGPRO";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <link rel="icon" type="image/svg+xml" href="~/images/logo-sigpro.svg">
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+</head>
+<body>
+
+    <div class="contenedor-login">
+
+        <div class="login-sidebar">
+            <h2>SIGPRO</h2>
+            <p>Sistema Integral de Gestión de Proveedores</p>
+        </div>
+
+        <div class="login-form-container">
+            <h3>BIENVENIDO</h3>
+
+            @if (ViewBag.Error != null)
+            {
+                <div style="background-color: rgba(255, 82, 82, 0.1); border: 1px solid var(--acento-rojo); color: var(--acento-rojo); padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; text-align: center;">
+                    @ViewBag.Error
+                </div>
+            }
+
+            <form method="post" asp-controller="Acceso" asp-action="Login">
+                @Html.AntiForgeryToken() <div class="input-group">
+                <label for="textDni">Usuario (DNI):</label>
+                <input type="tel" id="textDni" name="Dni" placeholder="Ingresa tu número de DNI" required autocomplete="off" maxlength="8" pattern="[0-9]{7,8}" title="El DNI debe tener entre 7 y 8 números sin puntos." />
+            </div>
+
+            <div class="input-group">
+                <label for="textPassword">Contraseña:</label>
+                <input type="password" id="textPassword" name="Clave" placeholder="Ingresa tu Contraseña" maxlength="12" required />
+            </div>
+
+            <button type="submit" class="btn-acceder">Acceder</button>
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+        document.getElementById("textDni").addEventListener("input", function (e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+</script>
+</body>
+</html>

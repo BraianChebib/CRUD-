@@ -1,0 +1,118 @@
+﻿body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    height: 100vh;
+}
+
+
+.contenedor-login {
+    display: flex;
+    width: 100%;
+    max-width: 1000px;
+    height: 600px;
+    background-color: var(--bg-sidebar);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    margin: 20px;
+}
+
+
+.login-sidebar {
+    width: 350px;
+    background-color: var(--acento-verde);
+    color: var(--texto-primario);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    text-align: center;
+}
+
+.login-sidebar h2 {
+    font-size: 36px;
+    font-weight: var(--peso-logo);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.login-sidebar p {
+    font-size: 15px;
+    font-weight: var(--peso-regular);
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+
+.login-form-container {
+    flex: 1;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-form-container h3 {
+    font-size: 28px;
+    font-weight: var(--peso-titulo);
+    margin-bottom: 30px;
+    letter-spacing: 0.5px;
+}
+
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 25px;
+}
+
+.input-group label {
+    font-size: 14px;
+    font-weight: var(--peso-medio);
+    color: var(--texto-secundario);
+}
+
+.input-group input {
+    background-color: #1A241F;
+    border: 1px solid #2C3A32;
+    border-radius: 6px;
+    padding: 14px;
+    color: var(--texto-primario);
+    font-family: var(--fuente-sistema);
+    font-size: 15px;
+    transition: border-color 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--acento-verde);
+}
+
+
+.btn-acceder {
+    background-color: var(--acento-verde);
+    color: var(--texto-primario);
+    font-family: var(--fuente-sistema);
+    font-weight: var(--peso-medio);
+    font-size: 16px;
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.btn-acceder:hover {
+    background-color: #056339;
+}
+
+.btn-acceder:active {
+    transform: scale(0.99);
+}

@@ -1,4 +1,21 @@
-﻿/* ==========================================================================
+﻿@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Montserrat:wght@500;700;900&display=swap');
+
+:root {
+    --bg-principal: #0D1410;
+    --bg-sidebar: #141C18;
+    --texto-primario: #F6F7F4;
+    --texto-secundario: #8E9C94;
+    --acento-verde: #067A47;
+    --acento-rojo: #ff5252;
+    --fuente-sistema: 'Montserrat', 'Segoe UI',system-ui, sans-serif;
+    --fuente-datos: 'JetBrains Mono', 'Courier New', monospace;
+    --peso-logo: 900;
+    --peso-titulo: 700;
+    --peso-medio: 500;
+    --peso-regular: 400;
+}
+
+/* ==========================================================================
    1. RESETEO GENERAL Y BASE
    ========================================================================== */
 * {
@@ -52,8 +69,22 @@ body, html {
     margin-bottom: 24px;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centra el título y rol en el eje horizontal */
-    text-align: center; /* Centra el texto por si llega a quebrar */
+    align-items: center; 
+    text-align: center; 
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px; 
+    margin-bottom: 8px;
+}
+
+.sidebar-logo {
+    width: 80px; 
+    height: 80px;
+    object-fit: contain;
 }
 
 .sidebar-header h2 {
@@ -76,10 +107,10 @@ body, html {
 .sidebar-menu {
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly; /* Espaciado idéntico entre los botones */
-    align-items: center; /* Centra el contenedor de los botones horizontalmente */
-    flex-grow: 1; /* Estira el menú para empujar al footer al fondo */
-    padding: 40px 0; /* Separa los botones del header y del footer */
+    justify-content: space-evenly; 
+    align-items: center; 
+    flex-grow: 1; 
+    padding: 40px 0; 
     width: 100%;
 }
 
