@@ -3,6 +3,7 @@ using CRUD.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
@@ -13,6 +14,7 @@ builder.Services.AddControllers()
 
 builder.Services.AddEndpointsApiExplorer(); 
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllersWithViews();
 
 // Intentamos leer la conexión del archivo JSON
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -37,6 +39,13 @@ builder.Services.AddScoped<PedidoDetalleService>();
 builder.Services.AddScoped<OrdenCompraService>();
 builder.Services.AddScoped<OrdenCompraDetalleService>();
 
+builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Acceso/Login"; 
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(20); 
+    });
+
 var app = builder.Build();                 
 
 if (app.Environment.IsDevelopment())       
@@ -45,8 +54,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();   
 }
 
-app.UseHttpsRedirection();                 
+app.UseHttpsRedirection();
 
-app.MapControllers();                      
+app.UseStaticFiles();
+
+app.MapControllers();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Acceso}/{action=Login}/{id?}");
 
 app.Run();                                 

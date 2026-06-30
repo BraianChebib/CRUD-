@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SIGPRO</title>
+    <link rel="stylesheet" href="/css/site.css" />
+    <link rel="icon" type="image/svg+xml" href="~/images/logo-sigpro.svg">
+</head>
+<body>
+
+    <div class="contenedor-principal">
+
+        @await Html.PartialAsync("_Sidebar")
+
+        <main class="contenido-dinamico">
+            @RenderBody()
+        </main>
+
+    </div>
+
+</body>
+</html>
