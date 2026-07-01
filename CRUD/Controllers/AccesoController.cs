@@ -3,14 +3,14 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using CRUD.Models;
-using CRUD.Data; // Asegurate de que acá apunte a la carpeta donde está tu AppDbContext
+using CRUD.Data; 
 using System.Linq;
 
 namespace CRUD.Controllers
 {
     public class AccesoController : Controller
     {
-        // CAMBIADO: Ahora usamos el AppDbContext real de tu proyecto
+        
         private readonly AppDbContext _context;
 
         public AccesoController(AppDbContext context)
@@ -33,15 +33,25 @@ namespace CRUD.Controllers
             if (usuarioEncontrado != null)
             {
                 var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, usuarioEncontrado.Nombre),
-                    new Claim(ClaimTypes.Role, usuarioEncontrado.Rol)
-                };
+        {
+            new Claim(ClaimTypes.Name, usuarioEncontrado.Nombre),
+            new Claim(ClaimTypes.Role, usuarioEncontrado.Rol) // Acá viaja el rol (ej: "Produccion")
+        };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-                return RedirectToAction("Index", "Home");
+                // --- LÓGICA DE REDIRECCIÓN SEGÚN ROL ---
+                if (usuarioEncontrado.Rol == "Produccion")
+                {
+                    // Reemplazá "CrearPedido" y "Pedido" por los nombres reales de tu Acción y Controlador
+                    return RedirectToAction("CrearPedido", "Pedido");
+                }
+                else
+                {
+                    // Compras, Admin y el resto van al Home vacío con la mancha de color
+                    return RedirectToAction("Index", "Home");
+                }
             }
 
             ViewBag.Error = "El DNI o la contraseña son incorrectos.";

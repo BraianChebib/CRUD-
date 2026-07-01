@@ -15,9 +15,7 @@
     --peso-regular: 400;
 }
 
-/* ==========================================================================
-   1. RESETEO GENERAL Y BASE
-   ========================================================================== */
+
 * {
     margin: 0;
     padding: 0;
@@ -31,9 +29,7 @@ body, html {
     color: #ffffff;
 }
 
-/* ==========================================================================
-   2. ESTRUCTURA MACRO
-   ========================================================================== */
+
 .contenedor-principal {
     display: grid;
     grid-template-columns: 260px 1fr;
@@ -44,27 +40,22 @@ body, html {
 .contenido-dinamico {
     padding: 40px;
     overflow-y: auto;
-    background-color: #1a1a1a;
+    background-color: var(--bg-principal);
 }
 
-/* ==========================================================================
-   3. ESTILOS DEL SIDEBAR
-   ========================================================================== */
+
 .sidebar-general {
     width: 260px;
     height: 100vh;
-    background-color: #111111;
-    position: fixed;
-    top: 0;
-    left: 0;
+    background-color: var(--bg-sidebar);
     padding: 24px 16px;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    border-right: 1px solid #222222;
+    border-right: 1px solid #1E2E25;
 }
 
-/* Encabezado */
+
 .sidebar-header {
     margin-bottom: 24px;
     display: flex;
@@ -103,7 +94,7 @@ body, html {
     margin-top: 6px;
 }
 
-/* Contenedor del Menú */
+
 .sidebar-menu {
     display: flex;
     flex-direction: column;
@@ -127,15 +118,13 @@ body, html {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.sidebar-menu a:hover {
-    background-color: #1c1c1c;
-    color: #ffffff;
-    transform: scale(1.04);
-}
+    .sidebar-menu a:hover {
+        background-color: rgba(6, 122, 71, 0.15); 
+        color: var(--texto-primario);
+        transform: scale(1.04);
+    }
 
-/* ==========================================================================
-   4. BOTÓN CERRAR SESIÓN 
-   ========================================================================== */
+
 .sidebar-footer {
     padding-top: 16px;
     border-top: 1px solid #222222;
@@ -157,4 +146,73 @@ body, html {
 
 .btn-logout:hover {
     background-color: rgba(255, 82, 82, 0.1);
+}
+
+/* ==========================================================================
+   PANTALLA DE BIENVENIDA (MINIMALISTA - SIGPRO)
+   ========================================================================== */
+
+.bienvenida-contenedor {
+    position: relative;
+    width: 100%;
+    min-height: calc(100vh - 80px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: var(--bg-principal);
+}
+
+.figura-fondo-vector {
+    position: absolute;
+    width: 520px; /* Un toque más ajustado ahora que hay menos texto */
+    height: 520px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .figura-fondo-vector svg path {
+        fill: rgba(6, 122, 71, 0.12); /* Tu verde al 12% sólido y plano */
+    }
+
+.bienvenida-contenido {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px; /* Un pelo más cerrado el espacio interno */
+}
+
+.bienvenida-logo {
+    width: 130px;
+    height: 130px;
+    object-fit: contain;
+    margin-bottom: 8px;
+}
+
+.bienvenida-contenido h1 {
+    font-family: var(--fuente-sistema);
+    font-size: 3rem;
+    font-weight: var(--peso-logo); /* 900 */
+    color: var(--texto-primario);
+    letter-spacing: 3px;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.bienvenida-contenido p {
+    font-family: var(--fuente-sistema);
+    font-size: 1.2rem;
+    font-weight: var(--peso-medio); /* 500 */
+    color: var(--texto-secundario);
+    margin: 0;
+    letter-spacing: 0.5px;
 }

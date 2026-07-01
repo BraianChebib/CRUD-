@@ -1,7 +1,19 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Layout.cshtml"; // Le dice que use tu molde con el Sidebar
-    ViewData["Title"] = "Inicio"; // El título dinámico para la pestaña
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Inicio - SIGPRO";
 }
 
-<h1>¡Estructura de SIGPRO lista!</h1>
-<p>Este es el contenedor dinámico de la derecha. El Sidebar ya tendría que verse fijo a la izquierda.</p>
+<div class="bienvenida-contenedor">
+
+    <div class="figura-fondo-vector">
+        <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <path d="M402,305Q361,360,299,397Q237,434,171,399Q105,364,96,293Q87,222,126,171Q165,120,230,95Q295,70,361,114Q427,157,435,218Q443,280,402,305Z" />
+        </svg>
+    </div>
+
+    <div class="bienvenida-contenido">
+        <img src="/images/logo-sigpro.svg" alt="Logo SIGPRO" class="bienvenida-logo" />
+        <h1>SIGPRO</h1>
+        <p>Sistema Integral de Gestión de Proveedores</p>
+    </div>
+</div>
