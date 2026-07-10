@@ -15,10 +15,9 @@
 
         @if (User.IsInRole("Produccion"))
         {
-            // Apunta a PedidoController -> Acción: Index (o cambiar a la que crees para el formulario)
-            <a href="@Url.Action("Index", "Pedido")"
-               class="@(controladorActual == "Pedido" ? "menu-activo" : "")">
-                Nuevo Pedido
+            <a href="@Url.Action("Index", "Produccion")"
+               class="@(controladorActual == "Produccion" ? "menu-activo" : "")">
+                Módulo Producción
             </a>
         }
 

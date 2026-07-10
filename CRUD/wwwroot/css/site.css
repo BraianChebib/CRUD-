@@ -7,7 +7,7 @@
     --texto-secundario: #8E9C94;
     --acento-verde: #067A47;
     --acento-rojo: #ff5252;
-    --fuente-sistema: 'Montserrat', 'Segoe UI',system-ui, sans-serif;
+    --fuente-sistema: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
     --fuente-datos: 'JetBrains Mono', 'Courier New', monospace;
     --peso-logo: 900;
     --peso-titulo: 700;
@@ -15,20 +15,18 @@
     --peso-regular: 400;
 }
 
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body, html {
     height: 100%;
-    background-color: #1a1a1a;
-    color: #ffffff;
+    background-color: var(--bg-principal);
+    color: var(--texto-primario);
+    font-family: var(--fuente-sistema);
 }
-
 
 .contenedor-principal {
     display: grid;
@@ -43,7 +41,9 @@ body, html {
     background-color: var(--bg-principal);
 }
 
-
+/* ==========================================================================
+   SIDEBAR GENERAL
+   ========================================================================== */
 .sidebar-general {
     width: 260px;
     height: 100vh;
@@ -55,79 +55,76 @@ body, html {
     border-right: 1px solid #1E2E25;
 }
 
-
 .sidebar-header {
     margin-bottom: 24px;
     display: flex;
     flex-direction: column;
-    align-items: center; 
-    text-align: center; 
+    align-items: center;
+    text-align: center;
 }
 
 .logo-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px; 
+    gap: 12px;
     margin-bottom: 8px;
 }
 
 .sidebar-logo {
-    width: 80px; 
+    width: 80px;
     height: 80px;
     object-fit: contain;
 }
 
 .sidebar-header h2 {
-    color: #ffffff;
+    color: var(--texto-primario);
     font-size: 1.4rem;
-    font-weight: 700;
+    font-weight: var(--peso-titulo);
     margin: 0;
     letter-spacing: 0.5px;
 }
 
 .user-role-text {
     font-size: 0.8rem;
-    color: #888888;
-    font-weight: 400;
+    color: var(--texto-secundario);
+    font-weight: var(--peso-regular);
     display: block;
     margin-top: 6px;
 }
 
-
 .sidebar-menu {
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly; 
-    align-items: center; 
-    flex-grow: 1; 
-    padding: 40px 0; 
+    justify-content: space-evenly;
+    align-items: center;
+    flex-grow: 1;
+    padding: 40px 0;
     width: 100%;
 }
 
-.sidebar-menu a {
-    color: #aaaaaa;
-    text-decoration: none;
-    padding: 12px 16px;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    text-align: center;
-    width: 85%;
-    box-sizing: border-box;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-    .sidebar-menu a:hover {
-        background-color: rgba(6, 122, 71, 0.15); 
-        color: var(--texto-primario);
-        transform: scale(1.04);
+    .sidebar-menu a {
+        color: var(--texto-secundario);
+        text-decoration: none;
+        padding: 12px 16px;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        font-weight: var(--peso-medio);
+        text-align: center;
+        width: 85%;
+        box-sizing: border-box;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+        .sidebar-menu a:hover {
+            background-color: rgba(6, 122, 71, 0.15);
+            color: var(--texto-primario);
+            transform: scale(1.04);
+        }
 
 .sidebar-footer {
     padding-top: 16px;
-    border-top: 1px solid #222222;
+    border-top: 1px solid #1E2E25;
 }
 
 .btn-logout {
@@ -135,23 +132,22 @@ body, html {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    color: #ff5252;
+    color: var(--acento-rojo);
     text-decoration: none;
     padding: 12px 16px;
     border-radius: 6px;
     font-size: 0.95rem;
-    font-weight: 500;
+    font-weight: var(--peso-medio);
     transition: background-color 0.2s ease;
 }
 
-.btn-logout:hover {
-    background-color: rgba(255, 82, 82, 0.1);
-}
+    .btn-logout:hover {
+        background-color: rgba(255, 82, 82, 0.1);
+    }
 
 /* ==========================================================================
    PANTALLA DE BIENVENIDA (MINIMALISTA - SIGPRO)
    ========================================================================== */
-
 .bienvenida-contenedor {
     position: relative;
     width: 100%;
@@ -165,7 +161,7 @@ body, html {
 
 .figura-fondo-vector {
     position: absolute;
-    width: 520px; /* Un toque más ajustado ahora que hay menos texto */
+    width: 520px;
     height: 520px;
     top: 50%;
     left: 50%;
@@ -178,7 +174,7 @@ body, html {
 }
 
     .figura-fondo-vector svg path {
-        fill: rgba(6, 122, 71, 0.12); /* Tu verde al 12% sólido y plano */
+        fill: rgba(6, 122, 71, 0.12);
     }
 
 .bienvenida-contenido {
@@ -188,7 +184,7 @@ body, html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px; /* Un pelo más cerrado el espacio interno */
+    gap: 8px;
 }
 
 .bienvenida-logo {
@@ -201,7 +197,7 @@ body, html {
 .bienvenida-contenido h1 {
     font-family: var(--fuente-sistema);
     font-size: 3rem;
-    font-weight: var(--peso-logo); /* 900 */
+    font-weight: var(--peso-logo);
     color: var(--texto-primario);
     letter-spacing: 3px;
     margin: 0;
@@ -211,8 +207,301 @@ body, html {
 .bienvenida-contenido p {
     font-family: var(--fuente-sistema);
     font-size: 1.2rem;
-    font-weight: var(--peso-medio); /* 500 */
+    font-weight: var(--peso-medio);
     color: var(--texto-secundario);
     margin: 0;
     letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   ESTILOS PARA PANTALLAS OPERATIVAS (TABLAS Y FORMULARIOS - SIGPRO)
+   ========================================================================== */
+.modulo-contenedor {
+    padding: 40px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.modulo-header {
+    margin-bottom: 24px;
+}
+
+.header-titulos h1 {
+    font-family: var(--fuente-sistema);
+    font-size: 2rem;
+    font-weight: var(--peso-titulo);
+    color: var(--texto-primario);
+    margin: 0;
+}
+
+.barra-herramientas {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 20px;
+}
+
+.buscador-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.buscador-icono {
+    position: absolute;
+    left: 14px;
+    color: var(--texto-secundario);
+    pointer-events: none;
+}
+
+.buscador-wrapper input {
+    width: 100%;
+    background-color: var(--bg-sidebar);
+    border: 1px solid #1E2E25;
+    color: var(--texto-primario);
+    padding: 11px 16px 11px 42px;
+    border-radius: 6px;
+    font-family: var(--fuente-sistema);
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+    .buscador-wrapper input:focus {
+        border-color: var(--acento-verde);
+        box-shadow: 0 0 0 2px rgba(6, 122, 71, 0.15);
+    }
+
+.acciones-wrapper {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-principal {
+    background-color: var(--acento-verde);
+    color: var(--bg-principal);
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: var(--peso-medio);
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+    transition: filter 0.2s ease;
+}
+
+    .btn-principal:hover {
+        filter: brightness(1.2);
+    }
+
+.btn-secundario {
+    background-color: transparent;
+    color: var(--texto-secundario);
+    border: 1px solid #1E2E25;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: var(--peso-medio);
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+    .btn-secundario:not(:disabled):hover {
+        border-color: var(--acento-verde);
+        color: var(--texto-primario);
+        background-color: rgba(6, 122, 71, 0.05);
+    }
+
+    .btn-secundario:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+
+.tabla-tarjeta {
+    background-color: var(--bg-sidebar);
+    border: 1px solid #1E2E25;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tabla-sigpro {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.92rem;
+    font-family: var(--fuente-sistema);
+    table-layout: fixed;
+}
+
+/* 🔑 CONTROL DE ANCHOS CON VALORES FIJOS EXACTOS EN PIXELES */
+.col-id {
+    width: 135px;
+}
+
+.col-fecha {
+    width: 220px;
+}
+
+.col-estado {
+    width: 160px;
+}
+
+.col-responsable {
+}
+/* Fluida: absorbe el espacio restante */
+
+.tabla-sigpro th {
+    background-color: rgba(13, 20, 16, 0.6);
+    color: var(--texto-secundario);
+    padding: 16px 20px;
+    font-weight: var(--peso-titulo);
+    border-bottom: 2px solid #1E2E25; /* Grosor fijo de 2px para evitar el wobble */
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    position: relative;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.ordenable {
+    cursor: pointer;
+    user-select: none;
+}
+
+/* 🔑 Flecha en línea a la par del título con un margen fijo */
+.flecha-orden {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 0.65rem;
+    opacity: 0;
+    transition: all 0.15s ease;
+    width: 10px;
+}
+
+.ordenable:hover {
+    color: var(--texto-primario);
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+    .ordenable:hover .flecha-orden {
+        opacity: 0.4;
+    }
+
+/* 🌟 INDICACIÓN DE FILTRO ACTIVO */
+.orden-asc, .orden-desc {
+    color: var(--texto-primario) !important;
+    background-color: rgba(6, 122, 71, 0.06) !important;
+    border-bottom: 2px solid var(--acento-verde) !important; /* Mismo grosor, solo cambia el color */
+}
+
+    .orden-asc .flecha-orden, .orden-desc .flecha-orden {
+        opacity: 1 !important;
+        color: var(--acento-verde) !important;
+    }
+
+        .orden-asc .flecha-orden::before {
+            content: "▲";
+        }
+
+        .orden-desc .flecha-orden::before {
+            content: "▼";
+        }
+
+.tabla-sigpro td {
+    padding: 16px 20px;
+    color: var(--texto-secundario);
+    border-bottom: 1px solid rgba(30, 46, 37, 0.3);
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tabla-sigpro tbody tr {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+    .tabla-sigpro tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.015);
+    }
+
+    .tabla-sigpro tbody tr.fila-seleccionada {
+        background-color: rgba(6, 122, 71, 0.12) !important;
+    }
+
+        .tabla-sigpro tbody tr.fila-seleccionada td {
+            color: var(--texto-primario);
+        }
+
+.tabla-sigpro td:first-child,
+.tabla-sigpro th.col-id {
+    padding-left: 14px;
+    padding-right: 14px;
+}
+
+.tabla-sigpro tr:last-child td {
+    border-bottom: none;
+}
+
+.pedido-id {
+    font-family: var(--fuente-datos);
+    font-size: 0.95rem;
+    color: var(--acento-verde);
+    font-weight: var(--peso-titulo);
+}
+
+.tabla-vacia {
+    padding: 32px;
+    text-align: center;
+    color: var(--texto-secundario);
+    font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   🎨 BADGES CON TUS VALORES EXACTOS (15% OPACIDAD)
+   ========================================================================== */
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: var(--peso-titulo);
+    display: inline-block;
+    text-align: center;
+}
+
+.badge-produccion {
+    background-color: rgba(74, 222, 128, 0.15);
+    color: #4ADE80;
+    border: 1px solid rgba(74, 222, 128, 0.25);
+}
+
+.badge-revision {
+    background-color: rgba(251, 191, 36, 0.15);
+    color: #FBBF24;
+    border: 1px solid rgba(251, 191, 36, 0.25);
+}
+
+.badge-completado {
+    background-color: rgba(56, 189, 248, 0.15);
+    color: #38BDF8;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+}
+
+.badge-rechazado {
+    background-color: rgba(248, 113, 113, 0.15);
+    color: #F87171;
+    border: 1px solid rgba(248, 113, 113, 0.25);
 }

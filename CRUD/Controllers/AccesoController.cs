@@ -44,8 +44,7 @@ namespace CRUD.Controllers
                 // --- LÓGICA DE REDIRECCIÓN SEGÚN ROL ---
                 if (usuarioEncontrado.Rol == "Produccion")
                 {
-                    // Reemplazá "CrearPedido" y "Pedido" por los nombres reales de tu Acción y Controlador
-                    return RedirectToAction("CrearPedido", "Pedido");
+                    return RedirectToAction("Index", "Produccion");
                 }
                 else
                 {
