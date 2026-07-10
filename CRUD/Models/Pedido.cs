@@ -9,6 +9,7 @@ namespace CRUD.Models
         public int UsuarioId { get; set; }
         public DateTime Fecha { get; set; } = DateTime.UtcNow;
         public string Estado { get; set; } = "Pendiente";
+        public DateTime? UltimaModificacion { get; set; }
 
         public User? Usuario { get; set; }
         public List<PedidoDetalle> Detalles { get; set; } = new();
