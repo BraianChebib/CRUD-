@@ -23,7 +23,7 @@
                 Modificar
             </button>
 
-            <a href="@Url.Action("Crear", "Produccion")" class="btn-principal">
+            <a href="@Url.Action("CrearPedido", "Produccion")" class="btn-principal">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 Nuevo Pedido
             </a>
@@ -47,7 +47,7 @@
                     string claseBadge = pedido.Estado switch
                     {
                         "Aprobado" => "badge-produccion",
-                        "En Revisión" => "badge-revision",
+                        "Pendiente" => "badge-pendiente",
                         "Completado" => "badge-completado",
                         "Rechazado" => "badge-rechazado",
                         _ => "badge-revision"

@@ -1,0 +1,266 @@
+﻿@model IEnumerable<CRUD.Models.Articulo> // 🔑 Le pasamos la lista de artículos disponibles para el buscador
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Nuevo Pedido - SIGPRO";
+}
+
+<div class="modulo-contenedor">
+    <div class="modulo-header">
+        <h1>Nuevo Pedido de Planta</h1>
+    </div>
+
+    <div class="tabla-tarjeta" style="padding: 24px; margin-bottom: 24px; display: flex; gap: 40px;">
+        <div>
+            <span style="color: var(--texto-secundario); font-size: 0.8rem; text-transform: uppercase; display: block; margin-bottom: 6px;">Responsable</span>
+            <strong style="color: var(--texto-primario); font-size: 1.1rem;">Braian Chebib</strong>
+        </div>
+        <div>
+            <span style="color: var(--texto-secundario); font-size: 0.8rem; text-transform: uppercase; display: block; margin-bottom: 6px;">Fecha de Emisión</span>
+            <strong style="color: var(--texto-primario); font-size: 1.1rem;">@DateTime.Now.ToString("dd/MM/yyyy")</strong>
+        </div>
+    </div>
+
+    <div class="tabla-tarjeta" style="padding: 24px; margin-bottom: 24px; overflow: visible !important;">
+        <h3 style="font-size: 0.9rem; text-transform: uppercase; color: var(--texto-secundario); margin-bottom: 16px; letter-spacing: 0.5px;">Agregar Artículos</h3>
+
+        <div style="display: flex; gap: 16px; align-items: flex-end; position: relative; overflow: visible !important;">
+
+            <div style="flex: 1; position: relative;">
+                <label style="color: var(--texto-secundario); font-size: 0.8rem; display: block; margin-bottom: 8px;">Buscar Artículo</label>
+                <input type="text" id="input-articulo" class="buscador-wrapper" style="padding: 11px 16px; width: 100%; max-width: unset;" placeholder="Escriba el nombre del artículo..." autocomplete="off" />
+
+                <div id="dropdown-articulos" style="position: absolute; width: 100%; top: 68px; left: 0; z-index: 99999; max-height: 200px; overflow-y: auto; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.8); background-color: #1e2e25 !important; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px;">
+                </div>
+            </div>
+
+            <div style="width: 140px;">
+                <label style="color: var(--texto-secundario); font-size: 0.8rem; display: block; margin-bottom: 8px;">Cantidad</label>
+                <input type="number" id="input-cantidad" class="buscador-wrapper" style="padding: 11px 16px; width: 100%; text-align: center;" min="1" step="1" value="1" />
+            </div>
+
+            <button type="button" id="btn-agregar-lista" class="btn-principal" style="height: 44px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Agregar
+            </button>
+        </div>
+    </div>
+
+    <div class="tabla-tarjeta">
+        <table class="tabla-sigpro" id="tabla-detalles">
+            <thead>
+                <tr>
+                    <th style="width: 150px;">Código Art.</th>
+                    <th>Descripción del Artículo</th>
+                    <th style="width: 150px; text-align: center;">Cantidad</th>
+                    <th style="width: 100px; text-align: center;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr id="fila-vacia-detalle">
+                    <td colspan="4" class="tabla-vacia">No hay artículos agregados al pedido todavía.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; gap: 16px; margin-top: 24px;">
+        <a href="@Url.Action("Index", "Produccion")" class="btn-secundario">Cancelar</a>
+        <button type="button" id="btn-guardar-pedido" class="btn-principal" disabled>Confirmar y Guardar Pedido</button>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // 1. Array de artículos desde C#
+            const articulosDisibles = [
+                @foreach (var art in Model) {
+                    <text>{ id: @art.Id, nombre: "@Html.Raw(art.Nombre)", unidad: "@Html.Raw(art.UnidadMedida)" },</text>
+                }
+            ];
+
+            // 2. Elementos del DOM (Declarados al inicio para evitar errores de referencia)
+            const inputArticulo = document.getElementById("input-articulo");
+            const dropdown = document.getElementById("dropdown-articulos");
+            const inputCantidad = document.getElementById("input-cantidad");
+            const btnAgregar = document.getElementById("btn-agregar-lista");
+            const tablaDetalles = document.getElementById("tabla-detalles").querySelector("tbody");
+            const filaVacia = document.getElementById("fila-vacia-detalle");
+            const btnGuardar = document.getElementById("btn-guardar-pedido");
+
+            let articuloSeleccionado = null;
+            let listaDetallesTemp = []; // Guardará los objetos agregados antes del submit
+
+            // ==========================================
+            // LOGICA DEL BUSCADOR / DROPDOWN
+            // ==========================================
+            inputArticulo.addEventListener("input", function () {
+                const termino = this.value.toLowerCase().trim();
+                dropdown.innerHTML = "";
+                articuloSeleccionado = null;
+
+                if (termino.length === 0) {
+                    dropdown.style.display = "none";
+                    return;
+                }
+
+                // Filtrar coincidencias
+                const coincidencias = articulosDisibles.filter(a => a.nombre.toLowerCase().includes(termino));
+
+                if (coincidencias.length === 0) {
+                    dropdown.innerHTML = `<div class="tabla-vacia" style="padding: 12px; color: var(--texto-secundario);">No se encontraron artículos</div>`;
+                    dropdown.style.display = "block";
+                    return;
+                }
+
+                // Crear los renglones del dropdown flotante
+                coincidencias.forEach(art => {
+                    const item = document.createElement("div");
+                    item.style.padding = "12px 16px";
+                    item.style.cursor = "pointer";
+                    item.style.color = "var(--texto-secundario)";
+                    item.style.borderBottom = "1px solid rgba(255, 255, 255, 0.08)";
+                    item.innerHTML = `<strong style="color: var(--texto-primario);">${art.nombre}</strong> <span style="font-size: 0.8rem; margin-left: 8px;">(${art.unidad})</span>`;
+
+                    // Al hacer clic en una sugerencia
+                    item.addEventListener("click", function () {
+                        inputArticulo.value = art.nombre;
+                        articuloSeleccionado = art;
+                        dropdown.style.display = "none";
+                        inputCantidad.focus();
+                    });
+
+                    dropdown.appendChild(item);
+                });
+
+                dropdown.style.display = "block";
+            });
+
+            // Cerrar el dropdown si se hace clic afuera
+            document.addEventListener("click", function (e) {
+                if (e.target !== inputArticulo && e.target !== dropdown) {
+                    dropdown.style.display = "none";
+                }
+            });
+
+            // ==========================================
+            // LOGICA DE AGREGAR A LA TABLA
+            // ==========================================
+            btnAgregar.addEventListener("click", function () {
+                const cantidad = parseFloat(inputCantidad.value);
+
+                if (!articuloSeleccionado) {
+                    alert("Por favor, seleccione un artículo válido de la lista desplegable.");
+                    return;
+                }
+                if (isNaN(cantidad) || cantidad <= 0) {
+                    alert("Por favor, ingrese una cantidad mayor a cero.");
+                    return;
+                }
+
+                // Verificar si el artículo ya fue agregado para sumar las cantidades en vez de duplicar fila
+                const existe = listaDetallesTemp.find(d => d.articuloId === articuloSeleccionado.id);
+                if (existe) {
+                    existe.cantidad += cantidad;
+                } else {
+                    listaDetallesTemp.push({
+                        articuloId: articuloSeleccionado.id,
+                        nombre: articuloSeleccionado.nombre,
+                        unidad: articuloSeleccionado.unidad,
+                        cantidad: cantidad
+                    });
+                }
+
+                renderizarTabla();
+
+                // Limpiar barra de carga para el siguiente ítem
+                inputArticulo.value = "";
+                inputCantidad.value = "1";
+                articuloSeleccionado = null;
+                inputArticulo.focus();
+            });
+
+            function renderizarTabla() {
+                // Borrar todo el contenido excepto la fila vacía si correspondiera
+                tablaDetalles.innerHTML = "";
+
+                if (listaDetallesTemp.length === 0) {
+                    tablaDetalles.appendChild(filaVacia);
+                    btnGuardar.disabled = true;
+                    return;
+                }
+
+                btnGuardar.disabled = false;
+
+                listaDetallesTemp.forEach((item, index) => {
+                    const tr = document.createElement("tr");
+                    const idFormateado = item.articuloId.toString().padStart(4, '0');
+                    
+                    // 🔑 CORREGIDO: Botón estilizado manualmente de forma limpia para evitar los "..." flotantes
+                    tr.innerHTML = `
+                        <td class="col-id"><span class="pedido-id">#ART-${idFormateado}</span></td>
+                        <td style="color: var(--texto-primario); text-align: left;">${item.nombre}</td>
+                        <td style="text-align: center; font-family: var(--fuente-datos); color: var(--acento-verde); font-weight: bold;">${item.cantidad.toFixed(2)} <span style="font-size: 0.75rem; color: var(--texto-secundario); font-weight: normal;">${item.unidad}</span></td>
+                        <td style="text-align: center;">
+                            <button type="button" style="background: transparent; color: #ff6b6b; border: 1px solid rgba(255, 107, 107, 0.4); padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-family: inherit;" onclick="eliminarItemTemporal(${index})">
+                                Eliminar
+                            </button>
+                        </td>
+                    `;
+                    tablaDetalles.appendChild(tr);
+                });
+            }
+
+            // ==========================================
+            // LOGICA DE ENVÍO (BOTÓN CONFIRMAR)
+            // ==========================================
+            btnGuardar.addEventListener("click", function () {
+                if (listaDetallesTemp.length === 0) return;
+
+                const pedidoData = {
+                    usuarioId: 1, // Id de prueba asignado a Braian Chebib hasta tener el Login
+                    detalles: listaDetallesTemp.map(item => ({
+                        articuloId: item.articuloId,
+                        cantidad: item.cantidad
+                    }))
+                };
+
+                btnGuardar.disabled = true;
+                btnGuardar.textContent = "Guardando...";
+
+                // Enviamos el objeto complejo como JSON al End Point del controlador
+                fetch('/Produccion/GuardarPedido', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(pedidoData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("¡Pedido creado con éxito!");
+                        window.location.href = '/Produccion/Index'; // Volvemos al listado
+                    } else {
+                        alert("Error: " + data.mensaje);
+                        btnGuardar.disabled = false;
+                        btnGuardar.textContent = "Confirmar y Guardar Pedido";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error en la petición:", error);
+                    alert("Error de comunicación con el servidor.");
+                    btnGuardar.disabled = false;
+                    btnGuardar.textContent = "Confirmar y Guardar Pedido";
+                });
+            });
+
+            // Función global para que responda el botón eliminar de cada fila
+            window.eliminarItemTemporal = function(index) {
+                listaDetallesTemp.splice(index, 1);
+                renderizarTabla();
+            };
+        });
+    </script>
+}
