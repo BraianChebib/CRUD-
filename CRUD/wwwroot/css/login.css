@@ -22,7 +22,10 @@
 
 .login-sidebar {
     width: 350px;
-    background-color: var(--acento-verde);
+    /* Cambiamos el verde brillante por un pino oscuro, opaco y sofisticado */
+    background-color: #0E1A14;
+    /* Agregamos un borde sutil para que se separe de forma elegante del formulario derecho */
+    border-right: 1px solid #1E2E25;
     color: var(--texto-primario);
     display: flex;
     flex-direction: column;

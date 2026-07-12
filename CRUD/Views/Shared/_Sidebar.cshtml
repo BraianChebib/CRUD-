@@ -1,4 +1,10 @@
-﻿<aside class="sidebar-general">
+﻿@{
+    // Detectamos en qué controlador y acción está parado el navegador actualmente
+    var controladorActual = ViewContext.RouteData.Values["Controller"]?.ToString();
+    var accionActual = ViewContext.RouteData.Values["Action"]?.ToString();
+}
+
+<aside class="sidebar-general">
     <div class="sidebar-header">
         <img src="~/images/logo-sigpro.svg" alt="Logo SIGPRO" class="sidebar-logo" />
         <h2>SIGPRO</h2>
@@ -6,9 +12,62 @@
     </div>
 
     <nav class="sidebar-menu">
-        <a href="#">Módulo Prueba 1</a>
-        <a href="#">Módulo Prueba 2</a>
-        <a href="#">Módulo Prueba 3</a>
+
+        @if (User.IsInRole("Produccion"))
+        {
+            <a href="@Url.Action("Index", "Produccion")"
+               class="@(controladorActual == "Produccion" ? "menu-activo" : "")">
+                Módulo Producción
+            </a>
+        }
+
+        @if (User.IsInRole("Compras"))
+        {
+            // Apunta a PedidoController (pueden compartir controlador o filtrar por estado)
+            <a href="@Url.Action("Index", "Pedido")"
+               class="@(controladorActual == "Pedido" ? "menu-activo" : "")">
+                Gestión de Pedidos
+            </a>
+            // Apunta a OrdenCompraController
+            <a href="@Url.Action("Index", "OrdenCompra")"
+               class="@(controladorActual == "OrdenCompra" ? "menu-activo" : "")">
+                Órdenes de Compra
+            </a>
+        }
+
+        @if (User.IsInRole("Contabilidad"))
+        {
+            // Como ambos procesos usan Órdenes de Compra, apuntan a OrdenCompraController
+            // Usamos acciones distintas (que vas a crear después) para separar las listas
+            <a href="@Url.Action("PendientesAprobacion", "OrdenCompra")"
+               class="@(controladorActual == "OrdenCompra" && accionActual == "PendientesAprobacion" ? "menu-activo" : "")">
+                OC por Aprobar
+            </a>
+            <a href="@Url.Action("PendientesPago", "OrdenCompra")"
+               class="@(controladorActual == "OrdenCompra" && accionActual == "PendientesPago" ? "menu-activo" : "")">
+                OC por Pagar
+            </a>
+        }
+
+        @if (User.IsInRole("Administracion"))
+        {
+            // Apunta a ProveedorController
+            <a href="@Url.Action("Index", "Proveedor")"
+               class="@(controladorActual == "Proveedor" ? "menu-activo" : "")">
+                Proveedores
+            </a>
+            // Apunta a UserController
+            <a href="@Url.Action("Index", "User")"
+               class="@(controladorActual == "User" ? "menu-activo" : "")">
+                Usuarios
+            </a>
+            // Apunta a ArticuloController
+            <a href="@Url.Action("Index", "Articulo")"
+               class="@(controladorActual == "Articulo" ? "menu-activo" : "")">
+                Artículos
+            </a>
+        }
+
     </nav>
 
     <div class="sidebar-footer">
