@@ -50,6 +50,42 @@ namespace CRUD.Migrations
                     b.ToTable("Articulos");
                 });
 
+            modelBuilder.Entity("CRUD.Models.Cotizacion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("NroCotizacion")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("PedidoId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Precio")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<string>("RazonSocialProveedor")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TiempoEstimadoEntrega")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("TotalidadArticulos")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PedidoId");
+
+                    b.ToTable("Cotizaciones");
+                });
+
             modelBuilder.Entity("CRUD.Models.OrdenCompra", b =>
                 {
                     b.Property<int>("Id")
@@ -66,9 +102,15 @@ namespace CRUD.Migrations
                     b.Property<DateTime?>("FechaEntregaReal")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<DateTime>("FechaEstimadaEntrega")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("NumeroFactura")
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
+
+                    b.Property<int>("PedidoId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ProveedorId")
                         .HasColumnType("int");
@@ -110,6 +152,8 @@ namespace CRUD.Migrations
                         .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrdenCompraId");
 
                     b.ToTable("OrdenCompraDetalles");
                 });
@@ -246,6 +290,17 @@ namespace CRUD.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("CRUD.Models.Cotizacion", b =>
+                {
+                    b.HasOne("CRUD.Models.Pedido", "Pedido")
+                        .WithMany()
+                        .HasForeignKey("PedidoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pedido");
+                });
+
             modelBuilder.Entity("CRUD.Models.OrdenCompra", b =>
                 {
                     b.HasOne("CRUD.Models.Proveedor", "Proveedor")
@@ -263,6 +318,15 @@ namespace CRUD.Migrations
                     b.Navigation("Proveedor");
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("CRUD.Models.OrdenCompraDetalle", b =>
+                {
+                    b.HasOne("CRUD.Models.OrdenCompra", null)
+                        .WithMany("Detalles")
+                        .HasForeignKey("OrdenCompraId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CRUD.Models.Pedido", b =>
@@ -298,6 +362,11 @@ namespace CRUD.Migrations
             modelBuilder.Entity("CRUD.Models.Articulo", b =>
                 {
                     b.Navigation("PedidoDetalles");
+                });
+
+            modelBuilder.Entity("CRUD.Models.OrdenCompra", b =>
+                {
+                    b.Navigation("Detalles");
                 });
 
             modelBuilder.Entity("CRUD.Models.Pedido", b =>

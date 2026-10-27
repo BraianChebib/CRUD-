@@ -12,6 +12,7 @@ namespace CRUD.Data
         public DbSet<Articulo> Articulos {get; set;}
         public DbSet<Pedido> Pedidos {get; set;}
         public DbSet<PedidoDetalle> PedidoDetalles {get; set;}
+        public DbSet<Cotizacion> Cotizaciones { get; set; }
         public DbSet<OrdenCompra> OrdenesCompra {get; set;}
         public DbSet<OrdenCompraDetalle> OrdenCompraDetalles { get; set; }
 
