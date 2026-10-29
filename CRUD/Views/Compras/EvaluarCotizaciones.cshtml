@@ -1,0 +1,483 @@
+﻿@model CRUD.Models.Pedido
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Evaluar Cotizaciones";
+}
+
+<div class="modulo-contenedor">
+
+    <div class="modulo-header">
+        <h1>Evaluar Cotizaciones - Pedido #PD-@Model.Id.ToString("D4")</h1>
+    </div>
+
+    <div class="barra-herramientas" style="justify-content: flex-end;">
+        <a href="@Url.Action("Pedidos", "Compras")" class="btn-secundario">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Volver a Pedidos
+        </a>
+    </div>
+
+    <!-- Layout de pantalla dividida (2/3 Izquierda, 1/3 Derecha) -->
+    <div class="layout-pantalla-dividida">
+
+        <!-- PANEL IZQUIERDO: 2/3 de la pantalla -->
+        <div class="panel-izquierdo tabla-tarjeta">
+            <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Detalle del Requerimiento</h3>
+
+            <div class="info-pedido" style="display: flex; gap: 40px; margin-bottom: 20px;">
+                <p><strong>Responsable:</strong> @Model.Usuario?.Nombre</p>
+                <p><strong>Fecha de Solicitud:</strong> @Model.Fecha.ToString("dd/MM/yyyy")</p>
+                <p><strong>Estado Actual:</strong> @Model.Estado</p>
+            </div>
+
+            <h4 style="margin-top: 25px; margin-bottom: 15px; font-size: 1.1rem;">Artículos Solicitados</h4>
+            <table class="tabla-sigpro">
+                <thead>
+                    <tr>
+                        <th>Artículo</th>
+                        <th style="text-align: center; width: 150px;">Cant.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Cemento Loma Negra 50kg</td>
+                        <td style="text-align: center;">100</td>
+                    </tr>
+                    <tr>
+                        <td>Ladrillo Hueco 18x18x33</td>
+                        <td style="text-align: center;">500</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PANEL DERECHO: 1/3 de la pantalla -->
+        <div class="panel-derecho">
+            <div class="header-cotizaciones">
+                <h3 style="font-size: 1.2rem;">Ofertas</h3>
+
+                <!-- Solo mostramos el botón si el pedido está Pendiente -->
+                @if (Model.Estado == "Pendiente")
+                {
+                    <button id="btnAbrirModal" class="btn-principal">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Nueva
+                    </button>
+                }
+                else
+                {
+                    <span style="font-size: 0.9rem; color: #6c757d; font-style: italic;">
+                        (Cotización cerrada)
+                    </span>
+                }
+            </div>
+
+            <!-- Contenedor de las tarjetas inyectadas por JS -->
+            <div id="contenedorCotizaciones" class="lista-cotizaciones">
+                <div style="text-align: center; padding: 40px; opacity: 0.7;">Cargando cotizaciones...</div>
+            </div>
+
+            <div class="footer-cotizaciones">
+                <!-- Se quitó el color de fondo fijo del style para que el CSS lo controle -->
+                <button id="btnGenerarOC" class="btn-principal" style="width: 100%; justify-content: center;" disabled>
+                    Generar Orden de Compra
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Personalizado SIGPRO (Sin Bootstrap) -->
+<div id="modalCotizacion" class="modal-overlay">
+    <div class="modal-caja tabla-tarjeta">
+        <div class="modal-header-custom">
+            <h3 style="margin: 0; font-size: 1.2rem;">Registrar Nueva Cotización</h3>
+            <button type="button" class="btn-cerrar-modal" id="btnCerrarModal">&times;</button>
+        </div>
+        <div class="modal-body-custom">
+            <form id="formCotizacion">
+                <div class="form-grupo">
+                    <label>Nro. Cotización (Referencia)</label>
+                    <input type="text" id="NroCotizacion" required autocomplete="off">
+                </div>
+
+                <!-- Input con Autocompletado (Datalist) conectado a la BD -->
+                <div class="form-grupo">
+                    <label>Proveedor Aprobado</label>
+                    <input type="text" id="RazonSocialProveedor" list="listaProveedores" placeholder="Empezá a escribir..." required autocomplete="off">
+                    <datalist id="listaProveedores">
+                        @if (ViewBag.Proveedores != null)
+                        {
+                            foreach (var prov in ViewBag.Proveedores)
+                            {
+                                <option value="@prov.RazonSocial">CUIT: @prov.Cuit</option>
+                            }
+                        }
+                    </datalist>
+                </div>
+
+                <div class="form-grupo">
+                    <label>Precio Total ($)</label>
+                    <input type="number" step="0.01" id="Precio" required>
+                </div>
+                <div class="form-grupo">
+                    <label>Tiempo Estimado de Entrega</label>
+                    <input type="text" id="TiempoEstimadoEntrega" required autocomplete="off">
+                </div>
+                <div class="form-check-custom">
+                    <input type="checkbox" id="TotalidadArticulos" checked>
+                    <label for="TotalidadArticulos">¿Cubre la totalidad de los artículos?</label>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer-custom">
+            <button type="button" class="btn-secundario" id="btnCancelarModal">Cancelar</button>
+            <button type="button" class="btn-principal" id="btnGuardarCotizacion">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* 1. LAYOUT PRINCIPAL */
+    .layout-pantalla-dividida {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        margin-top: 20px;
+    }
+
+    .panel-izquierdo {
+        padding: 24px;
+        height: fit-content;
+    }
+
+    .panel-derecho {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .header-cotizaciones {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .lista-cotizaciones {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    /* 2. TARJETAS DE COTIZACIÓN */
+    .tarjeta-cot {
+        border: 2px solid var(--borde-color, rgba(150, 150, 150, 0.4));
+        border-radius: 8px;
+        padding: 16px;
+        cursor: pointer;
+        transition: all 0.2s;
+        background-color: transparent;
+        color: inherit;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+        .tarjeta-cot:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .tarjeta-cot.seleccionada {
+            border-color: #198754;
+            background-color: rgba(25, 135, 84, 0.05);
+        }
+
+    .footer-cotizaciones {
+        margin-top: auto;
+        border-top: 1px solid var(--borde-color, #eaeaea);
+        padding-top: 20px;
+    }
+
+    /* 3. MODAL PERSONALIZADO */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .modal-caja {
+        width: 100%;
+        max-width: 500px;
+        padding: 24px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .modal-header-custom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .btn-cerrar-modal {
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        cursor: pointer;
+        color: inherit;
+        opacity: 0.7;
+    }
+
+        .btn-cerrar-modal:hover {
+            opacity: 1;
+        }
+
+    .form-grupo {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+        .form-grupo input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: transparent;
+            color: inherit;
+        }
+
+            .form-grupo input::-webkit-calendar-picker-indicator {
+                opacity: 0.5;
+                cursor: pointer;
+            }
+
+    .form-check-custom {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .modal-footer-custom {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 25px;
+    }
+
+    /* 4. ESTILOS DEL BOTÓN GENERAR OC */
+    #btnGenerarOC {
+        background-color: #198754;
+        border-color: #198754;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+        #btnGenerarOC:disabled {
+            background-color: #a0a0a0 !important;
+            border-color: #a0a0a0 !important;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        #btnGenerarOC:hover:not(:disabled) {
+            background-color: #146c43;
+            border-color: #13653f;
+        }
+
+    /* Responsive */
+    @@media (max-width: 992px) {
+        .layout-pantalla-dividida {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+@section Scripts {
+    <!-- IMPORTANTE: Librería de SweetAlert2 agregada acá -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        const PEDIDO_ID = @Model.Id;
+        const ESTADO_PEDIDO = '@Model.Estado'; // <-- AGREGADO: Guardamos el estado para JS
+        let cotizacionSeleccionadaId = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            cargarCotizaciones();
+
+            // <-- AGREGADO: Si ya no está Pendiente, ocultamos la zona del botón Generar OC
+            if (ESTADO_PEDIDO !== "Pendiente") {
+                const footer = document.querySelector(".footer-cotizaciones");
+                if (footer) footer.style.display = "none";
+            }
+
+            // LÓGICA DEL MODAL PERSONALIZADO
+            const modal = document.getElementById("modalCotizacion");
+            const btnAbrir = document.getElementById("btnAbrirModal");
+
+            // Abrir (con validación por si el botón no existe porque el pedido no está Pendiente)
+            if (btnAbrir) {
+                btnAbrir.addEventListener("click", () => {
+                    modal.style.display = "flex";
+                });
+            }
+
+            // Función para cerrar y limpiar
+            const cerrarModal = () => {
+                modal.style.display = "none";
+                document.getElementById("formCotizacion").reset();
+            };
+
+            // Eventos para cerrar
+            document.getElementById("btnCerrarModal").addEventListener("click", cerrarModal);
+            document.getElementById("btnCancelarModal").addEventListener("click", cerrarModal);
+
+            // Cerrar haciendo clic afuera del modal
+            window.addEventListener("click", (e) => {
+                if (e.target === modal) cerrarModal();
+            });
+
+            // Botón Guardar Cotización
+            document.getElementById("btnGuardarCotizacion").addEventListener("click", async () => {
+                const nuevaCotizacion = {
+                    pedidoId: PEDIDO_ID,
+                    nroCotizacion: document.getElementById("NroCotizacion").value,
+                    razonSocialProveedor: document.getElementById("RazonSocialProveedor").value,
+                    precio: parseFloat(document.getElementById("Precio").value),
+                    tiempoEstimadoEntrega: document.getElementById("TiempoEstimadoEntrega").value,
+                    totalidadArticulos: document.getElementById("TotalidadArticulos").checked
+                };
+
+                if (!nuevaCotizacion.nroCotizacion || !nuevaCotizacion.razonSocialProveedor || isNaN(nuevaCotizacion.precio)) {
+                    alert("Por favor completá los campos obligatorios.");
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/cotizaciones', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(nuevaCotizacion)
+                    });
+
+                    if (response.ok) {
+                        cerrarModal();
+                        cargarCotizaciones();
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            });
+
+            // Botón Generar OC (con chequeo de seguridad por si acaso)
+            const btnGenerarOC = document.getElementById("btnGenerarOC");
+            if (btnGenerarOC) {
+                btnGenerarOC.addEventListener("click", function () {
+                    if (!cotizacionSeleccionadaId) return;
+
+                    Swal.fire({
+                        title: '¿Generar Orden de Compra?',
+                        text: "Se generará una orden oficial para el proveedor seleccionado.",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#198754',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Sí, generar OC',
+                        cancelButtonText: 'Cancelar'
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            try {
+                                const response = await fetch('/Compras/GenerarOrdenCompra', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        PedidoId: PEDIDO_ID,
+                                        CotizacionId: parseInt(cotizacionSeleccionadaId)
+                                    })
+                                });
+
+                                if (response.ok) {
+                                    Swal.fire('¡Generada!', 'La Orden de Compra se creó correctamente.', 'success')
+                                        .then(() => {
+                                            window.location.href = '/Compras/Pedidos';
+                                        });
+                                } else {
+                                    Swal.fire('Error', 'No se pudo generar la orden.', 'error');
+                                }
+                            } catch (error) {
+                                Swal.fire('Error', 'Ocurrió un problema de conexión.', 'error');
+                            }
+                        }
+                    });
+                });
+            }
+        });
+
+        async function cargarCotizaciones() {
+            try {
+                const response = await fetch(`/api/cotizaciones/pedido/${PEDIDO_ID}`);
+                const cotizaciones = await response.json();
+                const contenedor = document.getElementById("contenedorCotizaciones");
+                contenedor.innerHTML = "";
+
+                if (cotizaciones.length === 0) {
+                    contenedor.innerHTML = `<div style="text-align: center; padding: 40px; opacity: 0.7;">Aún no hay cotizaciones cargadas.</div>`;
+                    return;
+                }
+
+                cotizaciones.forEach(cot => {
+                    const div = document.createElement("div");
+                    div.className = "tarjeta-cot tabla-tarjeta";
+                    div.innerHTML = `
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <h4 style="margin: 0 0 5px 0; font-size: 1.1rem;">${cot.razonSocialProveedor}</h4>
+                                        <div style="opacity: 0.7; font-size: 0.85em; margin-bottom: 10px;">Ref: ${cot.nroCotizacion}</div>
+
+                                        <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.95em;">
+                                            <div><strong>Total:</strong> $${cot.precio.toLocaleString('es-AR')}</div>
+                                            <div><strong>Entrega:</strong> ${cot.tiempoEstimadoEntrega}</div>
+                                        </div>
+                                    </div>
+                                    <div class="icono-check" style="display: none; color: #198754;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                    </div>
+                                </div>
+                            `;
+
+                    // <-- AGREGADO: Solo permite hacer clic si el estado sigue Pendiente
+                    if (ESTADO_PEDIDO === "Pendiente") {
+                        div.addEventListener("click", () => seleccionarCotizacion(div, cot.id));
+                    } else {
+                        div.style.cursor = "default"; // Le sacamos la manito de clic
+                    }
+
+                    contenedor.appendChild(div);
+                });
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+
+        function seleccionarCotizacion(tarjetaElement, id) {
+            document.querySelectorAll(".tarjeta-cot").forEach(t => {
+                t.classList.remove("seleccionada");
+                t.querySelector('.icono-check').style.display = 'none';
+            });
+            tarjetaElement.classList.add("seleccionada");
+            tarjetaElement.querySelector('.icono-check').style.display = 'block';
+
+            cotizacionSeleccionadaId = id;
+
+            const btn = document.getElementById("btnGenerarOC");
+            if (btn) btn.disabled = false;
+        }
+    </script>
+}

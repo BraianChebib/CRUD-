@@ -1,0 +1,196 @@
+﻿@model IEnumerable<CRUD.Models.Pedido>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Gestión de Pedidos - Compras";
+}
+
+<div class="modulo-contenedor">
+
+    <div class="modulo-header">
+        <h1>Pedidos para Cotizar</h1>
+    </div>
+
+    <div class="barra-herramientas">
+        <div class="buscador-wrapper">
+            <svg class="buscador-icono" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="tabla-buscador" placeholder="Buscar por pedido, responsable o fecha..." autocomplete="off" />
+        </div>
+
+        <div class="acciones-wrapper">
+            <!-- Botón principal que lleva a la pantalla dividida -->
+            <button id="btn-evaluar" class="btn-principal" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Evaluar Cotizaciones
+            </button>
+        </div>
+    </div>
+
+    <div class="tabla-tarjeta">
+        <table class="tabla-sigpro" id="tabla-pedidos">
+            <thead>
+                <tr>
+                    <th class="col-id ordenable" data-columna="id">Id <span class="flecha-orden"></span></th>
+                    <th class="col-responsable ordenable" data-columna="responsable">Responsable <span class="flecha-orden"></span></th>
+                    <th class="col-fecha ordenable" data-columna="fecha">Fecha de Creación <span class="flecha-orden"></span></th>
+                    <th class="col-estado ordenable" data-columna="estado">Estado <span class="flecha-orden"></span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pedido in Model)
+                {
+                    // Adaptado a los estados que maneja Compras
+                    string claseBadge = pedido.Estado switch
+                    {
+                        "Pendiente" => "badge-pendiente",
+                        "Cotizado" => "badge-produccion", // O la clase de color que prefieras para Cotizado
+                        "Aprobado" => "badge-completado",
+                        _ => "badge-revision"
+                    };
+
+                    <tr data-id="@pedido.Id">
+                        <td class="col-id"><span class="pedido-id">#PD-@pedido.Id.ToString("D4")</span></td>
+                        <td class="col-responsable">@pedido.Usuario?.Nombre</td>
+                        <td class="col-fecha">@pedido.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td class="col-estado"><span class="badge @claseBadge">@pedido.Estado</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div id="sin-resultados" class="tabla-vacia" style="display: none;">
+            No se encontraron pedidos que coincidan con la búsqueda.
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilo para botones deshabilitados */
+    .btn-principal:disabled, .btn-principal[disabled] {
+        background-color: #a0a0a0 !important;
+        border-color: #a0a0a0 !important;
+        color: #f0f0f0 !important;
+        cursor: not-allowed;
+        opacity: 0.7;
+        transform: none;
+        box-shadow: none;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const tabla = document.getElementById("tabla-pedidos");
+            const tbody = tabla.querySelector("tbody");
+            const btnEvaluar = document.getElementById("btn-evaluar");
+            const buscador = document.getElementById("tabla-buscador");
+            const sinResultados = document.getElementById("sin-resultados");
+            const cabeceras = tabla.querySelectorAll("th.ordenable");
+
+            let idSeleccionado = null;
+            let ordenDireccion = {};
+
+            // 1. SELECCIÓN DE FILA Y DOBLE CLIC
+            function inicializarFilas() {
+                tbody.querySelectorAll("tr").forEach(fila => {
+                    fila.addEventListener("click", function () {
+                        if (this.classList.contains("fila-seleccionada")) {
+                            this.classList.remove("fila-seleccionada");
+                            idSeleccionado = null;
+                            btnEvaluar.disabled = true;
+                        } else {
+                            tbody.querySelectorAll("tr").forEach(f => f.classList.remove("fila-seleccionada"));
+                            this.classList.add("fila-seleccionada");
+                            idSeleccionado = this.getAttribute("data-id");
+                            btnEvaluar.disabled = false;
+                        }
+                    });
+
+                    // Al hacer doble clic, navega a la pantalla dividida que armamos antes
+                    fila.addEventListener("dblclick", function () {
+                        const id = this.getAttribute("data-id");
+                        window.location.href = `/Compras/EvaluarCotizaciones/${id}`;
+                    });
+                });
+            }
+            inicializarFilas();
+
+            // Botón superior de Evaluar Cotizaciones
+            btnEvaluar.addEventListener("click", function () {
+                if (idSeleccionado) {
+                    window.location.href = `/Compras/EvaluarCotizaciones/${idSeleccionado}`;
+                }
+            });
+
+            // 2. BUSCADOR
+            buscador.addEventListener("input", function () {
+                const termino = this.value.toLowerCase().trim();
+                const filasActuales = Array.from(tbody.querySelectorAll("tr"));
+                let filasVisibles = 0;
+
+                filasActuales.forEach(fila => {
+                    const textoFila = fila.textContent.toLowerCase();
+                    if (textoFila.includes(termino)) {
+                        fila.style.display = "";
+                        filasVisibles++;
+                    } else {
+                        fila.style.display = "none";
+                        if (fila.classList.contains("fila-seleccionada")) {
+                            fila.classList.remove("fila-seleccionada");
+                            idSeleccionado = null;
+                            btnEvaluar.disabled = true;
+                        }
+                    }
+                });
+
+                sinResultados.style.display = filasVisibles === 0 ? "block" : "none";
+            });
+
+            // 3. ORDENAMIENTO (SORTING)
+            cabeceras.forEach(cabecera => {
+                cabecera.addEventListener("click", function () {
+                    const columna = this.getAttribute("data-columna");
+                    const filasActuales = Array.from(tbody.querySelectorAll("tr"));
+                    let direccion = "asc";
+                    if (ordenDireccion[columna] === "asc") {
+                        direccion = "desc";
+                    }
+                    ordenDireccion = { [columna]: direccion };
+
+                    cabeceras.forEach(th => th.classList.remove("orden-asc", "orden-desc"));
+                    this.classList.add(direccion === "asc" ? "orden-asc" : "orden-desc");
+
+                    const filasOrdenadas = filasActuales.sort((a, b) => {
+                        let valA = obtenerValorCelda(a, columna);
+                        let valB = obtenerValorCelda(b, columna);
+
+                        if (columna === "id") {
+                            valA = parseInt(valA.replace(/[^0-9]/g, ''), 10);
+                            valB = parseInt(valB.replace(/[^0-9]/g, ''), 10);
+                        } else if (columna === "fecha") {
+                            valA = parsearFecha(valA);
+                            valB = parsearFecha(valB);
+                        }
+
+                        if (valA < valB) return direccion === "asc" ? -1 : 1;
+                        if (valA > valB) return direccion === "asc" ? 1 : -1;
+                        return 0;
+                    });
+
+                    filasOrdenadas.forEach(fila => tbody.appendChild(fila));
+                });
+            });
+
+            function obtenerValorCelda(fila, columna) {
+                const celda = fila.querySelector(`.col-${columna}`);
+                return celda ? celda.textContent.trim() : "";
+            }
+
+            function parsearFecha(stringFecha) {
+                const partes = stringFecha.includes("/") ? stringFecha.split("/") : stringFecha.split("-");
+                if (partes[0].length === 2) {
+                    return new Date(partes[2], partes[1] - 1, partes[0]);
+                }
+                return new Date(partes[0], partes[1] - 1, partes[2]);
+            }
+        });
+    </script>
+}

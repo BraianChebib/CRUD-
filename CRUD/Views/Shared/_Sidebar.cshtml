@@ -23,12 +23,12 @@
 
         @if (User.IsInRole("Compras"))
         {
-            // Apunta a PedidoController (pueden compartir controlador o filtrar por estado)
-            <a href="@Url.Action("Index", "Pedido")"
-               class="@(controladorActual == "Pedido" ? "menu-activo" : "")">
+            <!-- Acá corregimos la ruta para que apunte a Compras/Pedidos -->
+            <a href="@Url.Action("Pedidos", "Compras")"
+               class="@(controladorActual == "Compras" ? "menu-activo" : "")">
                 Gestión de Pedidos
             </a>
-            // Apunta a OrdenCompraController
+
             <a href="@Url.Action("Index", "OrdenCompra")"
                class="@(controladorActual == "OrdenCompra" ? "menu-activo" : "")">
                 Órdenes de Compra
@@ -38,7 +38,7 @@
         @if (User.IsInRole("Contabilidad"))
         {
             // Como ambos procesos usan Órdenes de Compra, apuntan a OrdenCompraController
-            // Usamos acciones distintas (que vas a crear después) para separar las listas
+            // Usamos acciones distintas para separar las listas
             <a href="@Url.Action("PendientesAprobacion", "OrdenCompra")"
                class="@(controladorActual == "OrdenCompra" && accionActual == "PendientesAprobacion" ? "menu-activo" : "")">
                 OC por Aprobar
