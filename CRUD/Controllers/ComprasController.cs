@@ -80,7 +80,7 @@ namespace CRUD.Controllers
             _context.OrdenesCompra.Add(nuevaOC);
 
             // 6. Actualizamos el estado del pedido a "Completado" (o el estado que manejes cuando ya se compró)
-            pedido.Estado = "Completado";
+            pedido.Estado = "Cotizado";
 
             // 7. Ahora sí, guardamos todo!
             await _context.SaveChangesAsync();
@@ -108,6 +108,54 @@ namespace CRUD.Controllers
             ViewBag.DetallesPedido = detalles;
 
             return View(oc);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Ordenes()
+        {
+            // Traemos todas las órdenes generadas (podés filtrar por estado si querés)
+            var ordenes = await _context.OrdenesCompra
+                .Include(o => o.Proveedor)
+                .Include(o => o.Usuario)
+                .OrderByDescending(o => o.Id)
+                .ToListAsync();
+
+            return View(ordenes);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Recibir(int id)
+        {
+            var oc = await _context.OrdenesCompra
+                .Include(o => o.Proveedor)
+                .Include(o => o.Usuario)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (oc == null) return NotFound();
+
+            ViewBag.DetallesPedido = await _context.PedidoDetalles
+                .Include(d => d.Articulo)
+                .Where(d => d.PedidoId == oc.PedidoId)
+                .ToListAsync();
+
+            return View(oc);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmarRecepcion(int id, DateTime fechaEntregaReal, string numeroFactura)
+        {
+            var oc = await _context.OrdenesCompra.FindAsync(id);
+            if (oc == null) return NotFound("Orden no encontrada.");
+
+            // Actualizamos los datos reales de recepción
+            oc.FechaEntregaReal = fechaEntregaReal;
+            oc.NumeroFactura = numeroFactura;
+            oc.Estado = "Recibido";
+
+            await _context.SaveChangesAsync();
+
+            // Volvemos a la lista principal
+            return RedirectToAction(nameof(Ordenes));
         }
     }
 

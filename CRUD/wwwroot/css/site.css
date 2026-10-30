@@ -506,6 +506,26 @@ body, html {
     border: 1px solid rgba(248, 113, 113, 0.25);
 }
 
+.badge-espera {
+    background-color: rgba(251, 146, 60, 0.15);
+    color: #FB923C;
+    border: 1px solid rgba(251, 146, 60, 0.25);
+}
+
+/* Nuevo chip para "Recibido" (Verde similar al de producción) */
+.badge-recibido {
+    background-color: rgba(74, 222, 128, 0.15);
+    color: #4ADE80;
+    border: 1px solid rgba(74, 222, 128, 0.25);
+}
+
+/* Para Cancelado, vamos a reutilizar los colores de tu .badge-rechazado */
+.badge-cancelado {
+    background-color: rgba(248, 113, 113, 0.15);
+    color: #F87171;
+    border: 1px solid rgba(248, 113, 113, 0.25);
+}
+
 /* ==========================================================================
    RESPONSIVE DESIGN (ADAPTACIÓN PARA PANTALLAS CHICAS / TABLETS)
    ========================================================================== */

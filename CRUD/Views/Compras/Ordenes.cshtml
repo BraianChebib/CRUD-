@@ -1,0 +1,157 @@
+﻿@model IEnumerable<CRUD.Models.OrdenCompra>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Órdenes de Compra";
+}
+
+<div class="modulo-contenedor">
+    <div class="modulo-header">
+        <h1>Órdenes de Compra</h1>
+    </div>
+
+    <!-- BOTONERA SUPERIOR (Inactiva por defecto) -->
+    <div class="barra-herramientas" style="justify-content: flex-start; gap: 15px; margin-top: 20px;">
+        <button id="btnGestionar" class="btn-principal" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Gestionar Ingreso
+        </button>
+        <button id="btnVerDoc" class="btn-secundario" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Ver Documento
+        </button>
+    </div>
+
+    <div class="tabla-tarjeta" style="margin-top: 15px;">
+        <table class="tabla-sigpro">
+            <thead>
+                <tr>
+                    <th>Nº OC</th>
+                    <th>Solicitante</th>
+                    <th>Proveedor</th>
+                    <th>Entrega Est.</th>
+                    <th>Total ($)</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var oc in Model)
+                {
+                    <!-- Le agregamos data-attributes para que JS sepa qué fila tocamos -->
+                    <tr class="fila-seleccionable" data-id="@oc.Id" data-estado="@oc.Estado">
+                        <td><strong>OC-@oc.Id.ToString("D5")</strong></td>
+                        <td>@oc.Usuario?.Nombre</td>
+                        <td>@oc.Proveedor?.RazonSocial</td>
+                        <td>@oc.FechaEstimadaEntrega.ToString("dd/MM/yyyy")</td>
+                        <td>$@oc.Total.ToString("N2", new System.Globalization.CultureInfo("es-AR"))</td>
+                        <td>
+                            @if (oc.Estado == "Recibido")
+                            {
+                                <span class="badge badge-recibido">@oc.Estado</span>
+                            }
+                            else if (oc.Estado == "Cancelado")
+                            {
+                                <span class="badge badge-cancelado">@oc.Estado</span>
+                            }
+                            else
+                            {
+                                <!-- Acortamos el texto y nos aseguramos de que use la clase del chip -->
+                                <span class="badge badge-espera">En Espera</span>
+                            }
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #888; padding: 20px;">No hay órdenes de compra registradas.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    /* Estilos para el efecto de selección de filas */
+    .fila-seleccionable {
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+        .fila-seleccionable:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+    .fila-seleccionada {
+        background-color: rgba(25, 135, 84, 0.08) !important;
+    }
+
+        /* Pequeño indicador visual a la izquierda para la fila activa */
+        .fila-seleccionada td:first-child {
+            box-shadow: inset 4px 0 0 0 #198754;
+        }
+</style>
+
+@section Scripts {
+    <script>
+        let ocSeleccionadaId = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const filas = document.querySelectorAll(".fila-seleccionable");
+            const btnGestionar = document.getElementById("btnGestionar");
+            const btnVerDoc = document.getElementById("btnVerDoc");
+
+            filas.forEach(fila => {
+                fila.addEventListener("click", function () {
+                    // 1. Limpiamos la selección anterior
+                    filas.forEach(f => f.classList.remove("fila-seleccionada"));
+
+                    // 2. Pintamos la fila clickeada
+                    this.classList.add("fila-seleccionada");
+
+                    // 3. Capturamos los datos
+                    ocSeleccionadaId = this.getAttribute("data-id");
+                    const estado = this.getAttribute("data-estado");
+
+                    // 4. Activamos botones según las reglas de negocio
+                    btnVerDoc.disabled = false; // El documento SIEMPRE se puede ver
+
+                    // Solo se puede recibir si no está cancelada ni ya recibida
+                    if (estado !== "Recibido" && estado !== "Cancelado") {
+                        btnGestionar.disabled = false;
+                    } else {
+                        btnGestionar.disabled = true;
+                    }
+                });
+
+                fila.addEventListener("dblclick", function () {
+                    const id = this.getAttribute("data-id");
+                    const estado = this.getAttribute("data-estado");
+
+                    if (estado !== "Recibido" && estado !== "Cancelado") {
+                        // Si está pendiente, el doble clic te lleva a Gestionar Ingreso
+                        window.location.href = `/Compras/Recibir/${id}`;
+                    } else {
+                        // Si ya está cerrada, el doble clic te abre el PDF en pestaña nueva
+                        window.open(`/Compras/VerOrdenCompra/${id}`, '_blank');
+                    }
+                });
+            });
+
+            // Acción del botón Gestionar
+            btnGestionar.addEventListener("click", () => {
+                if (ocSeleccionadaId) {
+                    window.location.href = `/Compras/Recibir/${ocSeleccionadaId}`;
+                }
+            });
+
+            // Acción del botón Ver Documento
+            btnVerDoc.addEventListener("click", () => {
+                if (ocSeleccionadaId) {
+                    // Lo abre en una pestaña nueva para no perder la lista
+                    window.open(`/Compras/VerOrdenCompra/${ocSeleccionadaId}`, '_blank');
+                }
+            });
+        });
+    </script>
+}

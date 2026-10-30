@@ -41,9 +41,11 @@
                     // Adaptado a los estados que maneja Compras
                     string claseBadge = pedido.Estado switch
                     {
-                        "Pendiente" => "badge-pendiente",
-                        "Cotizado" => "badge-produccion", // O la clase de color que prefieras para Cotizado
-                        "Aprobado" => "badge-completado",
+                        "Pendiente" => "badge-pendiente",   // Amarillo
+                        "Aprobado" => "badge-produccion",  // Verde (usamos tu clase verde existente)
+                        "Cotizado" => "badge-completado",  // Azul (reutilizamos la clase azul para este estado)
+                        "Completado" => "badge-completado",  // Lo dejamos azul por si quedó algún registro viejo en la BD
+                        "Rechazado" => "badge-rechazado",   // Rojo
                         _ => "badge-revision"
                     };
 

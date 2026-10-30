@@ -1,0 +1,89 @@
+﻿@model CRUD.Models.OrdenCompra
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Ingresar Factura y Recepción";
+}
+
+<div class="modulo-contenedor">
+    <div class="modulo-header">
+        <h1>Recepción de Materiales - OC-@Model.Id.ToString("D5")</h1>
+    </div>
+
+    <div class="barra-herramientas" style="justify-content: flex-end;">
+        <a href="@Url.Action("Ordenes", "Compras")" class="btn-secundario">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Volver a Órdenes
+        </a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-top: 20px;">
+
+        <!-- PANEL IZQUIERDO: Resumen de la Orden -->
+        <div class="tabla-tarjeta" style="padding: 24px; height: fit-content;">
+            <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Verificación de Materiales</h3>
+
+            <div class="info-pedido" style="display: flex; gap: 40px; margin-bottom: 20px;">
+                <p><strong>Proveedor:</strong> @Model.Proveedor?.RazonSocial</p>
+                <p><strong>Entrega Est.:</strong> @Model.FechaEstimadaEntrega.ToString("dd/MM/yyyy")</p>
+                <p><strong>Total OC:</strong> $@Model.Total.ToString("N2", new System.Globalization.CultureInfo("es-AR"))</p>
+            </div>
+
+            <h4 style="margin-top: 25px; margin-bottom: 15px; font-size: 1.1rem;">Materiales Esperados</h4>
+            <table class="tabla-sigpro">
+                <thead>
+                    <tr>
+                        <th>Artículo</th>
+                        <th style="text-align: center; width: 100px;">Cant.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.DetallesPedido != null)
+                    {
+                        foreach (var item in ViewBag.DetallesPedido)
+                        {
+                            <tr>
+                                <td>@(item.Articulo != null ? item.Articulo.Nombre : "Sin nombre")</td>
+                                <td style="text-align: center;">@item.Cantidad</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+            <div style="margin-top: 25px; border-top: 1px solid #eaeaea; padding-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <p style="color: #6c757d; font-size: 0.85rem; margin: 0; width: 60%;">
+                    * Verificá físicamente las cantidades contra el remito antes de continuar.
+                </p>
+                <a href="@Url.Action("VerOrdenCompra", "Compras", new { id = Model.Id })" target="_blank" class="btn-secundario">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                    Ver Documento
+                </a>
+            </div>
+        </div>
+
+        <!-- PANEL DERECHO: Formulario de Recepción -->
+        <div class="tabla-tarjeta" style="padding: 24px;">
+            <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Confirmar Ingreso</h3>
+
+            <form action="@Url.Action("ConfirmarRecepcion", "Compras")" method="post">
+                <input type="hidden" name="id" value="@Model.Id" />
+
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+                    <label style="font-weight: 500;">Fecha Real de Entrega</label>
+                    <input type="date" name="fechaEntregaReal" required value="@DateTime.Now.ToString("yyyy-MM-dd")" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit; font-family: inherit;">
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px;">
+                    <label style="font-weight: 500;">Nº de Factura / Remito</label>
+                    <input type="text" name="numeroFactura" placeholder="Ej: 0001-00001234" required autocomplete="off" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit; font-family: inherit;">
+                </div>
+
+                <button type="submit" class="btn-principal" style="width: 100%; justify-content: center; background-color: #198754;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    Registrar Recepción
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
