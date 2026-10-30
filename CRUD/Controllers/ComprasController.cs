@@ -30,19 +30,20 @@ namespace CRUD.Controllers
         public async Task<IActionResult> EvaluarCotizaciones(int id)
         {
             var pedido = await _context.Pedidos
-                .Include(p => p.Usuario)
+                .Include(p => p.Usuario) // O p.User / p.Users (dependiendo de cómo se llame tu propiedad de navegación)
+                .Include(p => p.Detalles) // <--- Conectamos con pedidodetalles
+                    .ThenInclude(d => d.Articulo) // <--- Y de ahí traemos el Articulo para leer el nombre
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (pedido == null) return NotFound();
 
-            // Traemos los proveedores reales de la BD y los pasamos a la vista
             ViewBag.Proveedores = await _context.Proveedores.ToListAsync();
 
             return View(pedido);
         }
 
-        // POST: Compras/GenerarOrdenCompra
-        [HttpPost]
+            // POST: Compras/GenerarOrdenCompra
+            [HttpPost]
         public async Task<IActionResult> GenerarOrdenCompra([FromBody] GenerarOCRequest req)
         {
             // 1. Buscamos la cotización seleccionada para sacar el precio
@@ -84,7 +85,29 @@ namespace CRUD.Controllers
             // 7. Ahora sí, guardamos todo!
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { id = nuevaOC.Id });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerOrdenCompra(int id)
+        {
+            var oc = await _context.OrdenesCompra
+                .Include(o => o.Proveedor)
+                .Include(o => o.Usuario)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (oc == null) return NotFound();
+
+            // Buscamos los artículos del pedido original para imprimirlos en la OC
+            var detalles = await _context.PedidoDetalles // O el nombre que tenga tu DbSet de detalles de pedido
+                .Include(d => d.Articulo)
+                .Where(d => d.PedidoId == oc.PedidoId)
+                .ToListAsync();
+
+            // Se los pasamos a la vista
+            ViewBag.DetallesPedido = detalles;
+
+            return View(oc);
         }
     }
 

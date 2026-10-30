@@ -39,14 +39,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Cemento Loma Negra 50kg</td>
-                        <td style="text-align: center;">100</td>
-                    </tr>
-                    <tr>
-                        <td>Ladrillo Hueco 18x18x33</td>
-                        <td style="text-align: center;">500</td>
-                    </tr>
+                    @if (Model.Detalles != null && Model.Detalles.Any())
+                    {
+                        foreach (var item in Model.Detalles)
+                        {
+                            <tr>
+                                <td>@(item.Articulo != null ? item.Articulo.Nombre : "Artículo sin nombre")</td>
+                                <td style="text-align: center;">@item.Cantidad</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="2" style="text-align: center; color: #888; padding: 20px;">
+                                No hay artículos detallados en este requerimiento.
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
@@ -404,9 +414,11 @@
                                 });
 
                                 if (response.ok) {
+                                    const data = await response.json(); // Leemos la respuesta
                                     Swal.fire('¡Generada!', 'La Orden de Compra se creó correctamente.', 'success')
                                         .then(() => {
-                                            window.location.href = '/Compras/Pedidos';
+                                            // Te lleva directo a ver el documento
+                                            window.location.href = '/Compras/VerOrdenCompra/' + data.id;
                                         });
                                 } else {
                                     Swal.fire('Error', 'No se pudo generar la orden.', 'error');
