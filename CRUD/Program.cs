@@ -38,6 +38,7 @@ builder.Services.AddScoped<PedidoService>();
 builder.Services.AddScoped<PedidoDetalleService>();
 builder.Services.AddScoped<OrdenCompraService>();
 builder.Services.AddScoped<OrdenCompraDetalleService>();
+builder.Services.AddScoped<CotizacionService>();
 
 builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
