@@ -73,7 +73,7 @@ namespace CRUD.Controllers
                 // Como el tiempo en la cotización es un texto ("15 días"), le sumamos una fecha por defecto (ej: 7 días desde hoy)
                 FechaEstimadaEntrega = DateTime.Now.AddDays(7),
 
-                Estado = "Emitida" // O "Pendiente", según prefieras que nazca la OC
+                Estado = "Pendiente" // O "Pendiente", según prefieras que nazca la OC
             };
 
             // 5. La agregamos a la base de datos

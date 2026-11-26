@@ -1,0 +1,99 @@
+﻿@model CRUD.Models.OrdenCompra
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = $"Pago OC-{Model.Id:D5}";
+}
+
+<div class="modulo-contenedor">
+    <div class="modulo-header">
+        <h1>Gestión de Pago - OC-@Model.Id.ToString("D5")</h1>
+    </div>
+
+    <div class="barra-herramientas" style="justify-content: flex-end;">
+        <a href="@Url.Action("Pagos", "Contabilidad")" class="btn-secundario">
+            Volver a Pagos
+        </a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-top: 20px;">
+
+        <!-- PANEL IZQUIERDO: Detalle de la OC -->
+        <div class="tabla-tarjeta" style="padding: 24px; height: fit-content;">
+            <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Datos de la Orden de Compra</h3>
+
+            <div class="info-pedido" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                <p style="margin: 0;"><strong>Proveedor:</strong> @Model.Proveedor?.RazonSocial</p>
+                <p style="margin: 0;"><strong>Responsable:</strong> @Model.Usuario?.Nombre</p>
+                <p style="margin: 0;"><strong>Entrega Estimada:</strong> @Model.FechaEstimadaEntrega.ToString("dd/MM/yyyy")</p>
+                <p style="margin: 0;"><strong>Entrega Real:</strong> @(Model.FechaEntregaReal?.ToString("dd/MM/yyyy") ?? "-")</p>
+                <p style="margin: 0;"><strong>Nº Factura Proveedor:</strong> @(string.IsNullOrEmpty(Model.NumeroFactura) ? "-" : Model.NumeroFactura)</p>
+                <p style="margin: 0;"><strong>Monto Total:</strong> $@Model.Total.ToString("N2", new System.Globalization.CultureInfo("es-AR"))</p>
+            </div>
+
+            <h4 style="margin-top: 25px; margin-bottom: 15px; font-size: 1.1rem;">Artículos Recibidos</h4>
+            <table class="tabla-sigpro">
+                <thead>
+                    <tr>
+                        <th>Artículo</th>
+                        <th style="text-align: center; width: 100px;">Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.DetallesPedido != null)
+                    {
+                        foreach (var item in ViewBag.DetallesPedido)
+                        {
+                            <tr>
+                                <td>@(item.Articulo != null ? item.Articulo.Nombre : "Sin nombre")</td>
+                                <td style="text-align: center;">@item.Cantidad</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PANEL DERECHO: Registro de Pago -->
+        <div class="tabla-tarjeta" style="padding: 24px; height: fit-content;">
+            <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Registrar Pago</h3>
+
+            @if (Model.Estado == "Recibido")
+            {
+                <form action="@Url.Action("ConfirmarPago", "Contabilidad")" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="id" value="@Model.Id" />
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px;">
+                        <label style="font-weight: 500;">Número de Pago / Transferencia</label>
+                        <input type="text" name="numeroPago" required placeholder="Ej: TRF-00045821"
+                               style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit;" />
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px;">
+                        <label style="font-weight: 500;">Comprobante de Pago (PDF / Imagen)</label>
+                        <input type="file" name="comprobanteArchivo" accept=".pdf,.jpg,.jpeg,.png" required
+                               style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit;" />
+                    </div>
+
+                    <button type="submit" class="btn-principal" style="width: 100%; justify-content: center; background-color: #198754;">
+                        Confirmar Pago
+                    </button>
+                </form>
+            }
+            else if (Model.Estado == "Pagada")
+            {
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                    <p style="margin: 0;"><span class="badge badge-completado">Pagada</span></p>
+                    <p style="margin: 0;"><strong>Nº de Pago:</strong> @Model.NumeroPago</p>
+
+                    @if (!string.IsNullOrEmpty(Model.ComprobantePago))
+                    {
+                        <a href="@Model.ComprobantePago" target="_blank" class="btn-secundario" style="text-align: center; justify-content: center;">
+                            Ver Comprobante Adjunto
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+
+    </div>
+</div>

@@ -12,6 +12,9 @@ namespace CRUD.Models
 
         public decimal Total { get; set; }
         public string? NumeroFactura { get; set; }
+        public string? NumeroPago { get; set; }
+        public string? ComprobantePago { get; set; }
+        public string? MotivoRechazo { get; set; }
         public string Estado { get; set; } = "Pendiente";
 
         // Propiedades de navegación

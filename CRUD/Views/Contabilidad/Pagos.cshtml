@@ -1,0 +1,155 @@
+﻿@model IEnumerable<CRUD.Models.OrdenCompra>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Órdenes Pendientes de Pago";
+}
+
+<div class="modulo-contenedor">
+    <div class="modulo-header">
+        <h1>Órdenes Pendientes de Pago</h1>
+    </div>
+
+    <div class="barra-herramientas" style="justify-content: flex-start; gap: 15px; margin-top: 20px;">
+        <button id="btnPagar" class="btn-principal" disabled>
+            Gestionar Pago
+        </button>
+    </div>
+
+    <div class="tabla-tarjeta" style="margin-top: 15px;">
+        <table class="tabla-sigpro" id="tablaPagos">
+            <thead>
+                <tr>
+                    <th class="ordenable" data-col="0" data-tipo="num">Nº OC <span class="flecha">↕</span></th>
+                    <th class="ordenable" data-col="1" data-tipo="texto">Responsable <span class="flecha">↕</span></th>
+                    <th class="ordenable" data-col="2" data-tipo="texto">Proveedor <span class="flecha">↕</span></th>
+                    <th class="ordenable" data-col="3" data-tipo="fecha">Entrega Real <span class="flecha">↕</span></th>
+                    <th class="ordenable" data-col="4" data-tipo="num">Monto ($) <span class="flecha">↕</span></th>
+                    <th class="ordenable" data-col="5" data-tipo="texto">Estado <span class="flecha">↕</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var oc in Model)
+                {
+                    var (claseBadge, textoBadge) = oc.Estado switch
+                    {
+                        "Recibido" => ("badge-recibido", "Pendiente de Pago"),
+                        "Pagada" => ("badge-completado", "Pagada"),
+                        _ => ("badge-cancelado", oc.Estado)
+                    };
+
+                    <tr class="fila-seleccionable" data-id="@oc.Id">
+                        <td data-valor="@oc.Id"><strong>OC-@oc.Id.ToString("D5")</strong></td>
+                        <td data-valor="@oc.Usuario?.Nombre">@oc.Usuario?.Nombre</td>
+                        <td data-valor="@oc.Proveedor?.RazonSocial">@oc.Proveedor?.RazonSocial</td>
+                        <td data-valor="@(oc.FechaEntregaReal?.ToString("yyyy-MM-dd") ?? "")">
+                            @(oc.FechaEntregaReal?.ToString("dd/MM/yyyy") ?? "-")
+                        </td>
+                        <td data-valor="@oc.Total.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                            $@oc.Total.ToString("N2", new System.Globalization.CultureInfo("es-AR"))
+                        </td>
+                        <td data-valor="@textoBadge">
+                            <span class="badge @claseBadge">@textoBadge</span>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #888; padding: 20px;">No hay órdenes pendientes de pago.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .ordenable {
+        cursor: pointer;
+        user-select: none;
+    }
+
+        .ordenable:hover {
+            opacity: 0.8;
+        }
+
+    .flecha {
+        font-size: 0.8em;
+        opacity: 0.5;
+        margin-left: 4px;
+    }
+
+    .fila-seleccionable {
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .fila-seleccionada {
+        background-color: rgba(25, 135, 84, 0.08) !important;
+    }
+
+        .fila-seleccionada td:first-child {
+            box-shadow: inset 4px 0 0 0 #198754;
+        }
+</style>
+
+@section Scripts {
+    <script>
+        let ocSeleccionadaId = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const filas = document.querySelectorAll(".fila-seleccionable");
+            const btnPagar = document.getElementById("btnPagar");
+
+            filas.forEach(fila => {
+                fila.addEventListener("click", function () {
+                    filas.forEach(f => f.classList.remove("fila-seleccionada"));
+                    this.classList.add("fila-seleccionada");
+                    ocSeleccionadaId = this.getAttribute("data-id");
+                    btnPagar.disabled = false;
+                });
+
+                fila.addEventListener("dblclick", function () {
+                    const id = this.getAttribute("data-id");
+                    window.location.href = `/Contabilidad/Pagar/${id}`;
+                });
+            });
+
+            btnPagar.addEventListener("click", () => {
+                if (ocSeleccionadaId) {
+                    window.location.href = `/Contabilidad/Pagar/${ocSeleccionadaId}`;
+                }
+            });
+
+            // Ordenamiento bidireccional
+            const headers = document.querySelectorAll("#tablaPagos th.ordenable");
+            const tbody = document.querySelector("#tablaPagos tbody");
+            let ordenActual = { col: -1, asc: true };
+
+            headers.forEach(th => {
+                th.addEventListener("click", () => {
+                    const col = parseInt(th.getAttribute("data-col"));
+                    const tipo = th.getAttribute("data-tipo");
+                    const asc = ordenActual.col === col ? !ordenActual.asc : true;
+                    ordenActual = { col, asc };
+
+                    headers.forEach(h => h.querySelector(".flecha").textContent = "↕");
+                    th.querySelector(".flecha").textContent = asc ? "▲" : "▼";
+
+                    const filasArray = Array.from(tbody.querySelectorAll("tr.fila-seleccionable"));
+                    filasArray.sort((a, b) => {
+                        const valA = a.children[col].getAttribute("data-valor") || "";
+                        const valB = b.children[col].getAttribute("data-valor") || "";
+
+                        if (tipo === "num") {
+                            return asc ? parseFloat(valA) - parseFloat(valB) : parseFloat(valB) - parseFloat(valA);
+                        }
+                        return asc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                    });
+
+                    filasArray.forEach(f => tbody.appendChild(f));
+                });
+            });
+        });
+    </script>
+}

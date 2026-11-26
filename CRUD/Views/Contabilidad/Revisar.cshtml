@@ -1,0 +1,94 @@
+﻿@model CRUD.Models.OrdenCompra
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = $"Revisar OC-{Model.Id:D5}";
+}
+
+<div class="modulo-contenedor">
+    <div class="modulo-header">
+        <h1>Revisión Contable - OC-@Model.Id.ToString("D5")</h1>
+    </div>
+
+    <div class="barra-herramientas" style="justify-content: flex-end;">
+        <a href="@Url.Action("Aprobaciones", "Contabilidad")" class="btn-secundario">
+            Volver a Aprobaciones
+        </a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-top: 20px;">
+
+        <!-- PANEL IZQUIERDO: Detalle de la OC -->
+        <div class="tabla-tarjeta" style="padding: 24px; height: fit-content;">
+            <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Datos de la Orden de Compra</h3>
+
+            <div class="info-pedido" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                <p style="margin: 0;"><strong>Proveedor:</strong> @Model.Proveedor?.RazonSocial</p>
+                <p style="margin: 0;"><strong>Solicitante:</strong> @Model.Usuario?.Nombre</p>
+                <p style="margin: 0;"><strong>Entrega Estimada:</strong> @Model.FechaEstimadaEntrega.ToString("dd/MM/yyyy")</p>
+                <p style="margin: 0;"><strong>Monto Total:</strong> $@Model.Total.ToString("N2", new System.Globalization.CultureInfo("es-AR"))</p>
+            </div>
+
+            <h4 style="margin-top: 25px; margin-bottom: 15px; font-size: 1.1rem;">Artículos Incluidos</h4>
+            <table class="tabla-sigpro">
+                <thead>
+                    <tr>
+                        <th>Artículo</th>
+                        <th style="text-align: center; width: 100px;">Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.DetallesPedido != null)
+                    {
+                        foreach (var item in ViewBag.DetallesPedido)
+                        {
+                            <tr>
+                                <td>@(item.Articulo != null ? item.Articulo.Nombre : "Sin nombre")</td>
+                                <td style="text-align: center;">@item.Cantidad</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PANEL DERECHO: Decisión -->
+        <div class="tabla-tarjeta" style="padding: 24px; height: fit-content;">
+            <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Resolución</h3>
+
+            @if (Model.Estado == "Pendiente")
+            {
+                <form action="@Url.Action("Aprobar", "Contabilidad")" method="post" style="margin-bottom: 24px;">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn-principal" style="width: 100%; justify-content: center; background-color: #198754;">
+                        Aprobar Orden de Compra
+                    </button>
+                </form>
+
+                <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;" />
+
+                <form action="@Url.Action("Rechazar", "Contabilidad")" method="post">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+                        <label style="font-weight: 500;">Motivo de Rechazo</label>
+                        <textarea name="motivoRechazo" rows="3" required placeholder="Indicá el motivo (ej: excede presupuesto)..." style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit; font-family: inherit; resize: vertical;"></textarea>
+                    </div>
+                    <button type="submit" class="btn-secundario" style="width: 100%; justify-content: center; border-color: #F87171; color: #F87171;">
+                        Rechazar Orden
+                    </button>
+                </form>
+            }
+            else
+            {
+                <p style="margin-bottom: 12px;">Esta orden ya fue procesada.</p>
+                <p style="margin-bottom: 12px;"><strong>Estado actual:</strong> @Model.Estado</p>
+                @if (Model.Estado == "Rechazada" && !string.IsNullOrEmpty(Model.MotivoRechazo))
+                {
+                    <div style="padding: 12px; border-radius: 6px; background-color: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.25);">
+                        <strong>Motivo:</strong> @Model.MotivoRechazo
+                    </div>
+                }
+            }
+        </div>
+
+    </div>
+</div>
