@@ -1,0 +1,53 @@
+﻿@model CRUD.Models.User
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Nuevo Usuario - SIGPRO";
+}
+
+<div class="modulo-contenedor">
+    <div class="modulo-header">
+        <h1>Nuevo Usuario</h1>
+    </div>
+
+    <div class="barra-herramientas" style="justify-content: flex-end;">
+        <a href="@Url.Action("Usuarios", "Admin")" class="btn-secundario">Volver a Usuarios</a>
+    </div>
+
+    <div class="tabla-tarjeta" style="padding: 24px; max-width: 700px; margin-top: 20px;">
+        <form action="@Url.Action("CrearUsuario", "Admin")" method="post" style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-weight: 500;">Nombre Completo</label>
+                <input type="text" name="Nombre" required placeholder="Ej: Juan Pérez"
+                       style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit;" />
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-weight: 500;">DNI</label>
+                <input type="text" name="Dni" required placeholder="Ej: 38123456"
+                       style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit;" />
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-weight: 500;">Rol</label>
+                <select name="Rol" required style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit;">
+                    <option value="" disabled selected>Seleccionar rol...</option>
+                    <option value="Produccion" style="color: #000;">Producción</option>
+                    <option value="Compras" style="color: #000;">Compras</option>
+                    <option value="Contabilidad" style="color: #000;">Contabilidad</option>
+                    <option value="Administracion" style="color: #000;">Administración</option>
+                </select>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-weight: 500;">Contraseña</label>
+                <input type="password" name="Clave" maxlength="12" required placeholder="Máximo 12 caracteres"
+                       style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit;" />
+            </div>
+
+            <div style="grid-column: span 2; display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
+                <a href="@Url.Action("Usuarios", "Admin")" class="btn-secundario">Cancelar</a>
+                <button type="submit" class="btn-principal">Guardar Usuario</button>
+            </div>
+        </form>
+    </div>
+</div>

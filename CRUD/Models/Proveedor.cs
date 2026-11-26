@@ -8,6 +8,7 @@ namespace CRUD.Models
         public string Cuit { get; set; } = string.Empty;
         public string Mail { get; set; } = string.Empty;
         public string Telefono { get; set; } = string.Empty;
+        public bool Activo { get; set; } = true;
 
         public List<OrdenCompra> OrdenesCompra { get; set; } = new();
     }

@@ -32,7 +32,9 @@ namespace CRUD.Controllers
         // ==========================================================================
         public async Task<IActionResult> CrearPedido()
         {
-            var articulos = await _context.Articulos.ToListAsync();
+            var articulos = await _context.Articulos
+                                          .Where(a => a.Activo)
+                                          .ToListAsync();
             return View(articulos);
         }
 
@@ -97,7 +99,9 @@ namespace CRUD.Controllers
             }
 
             // 🔑 Catálogo para el buscador de la vista
-            ViewBag.ArticulosDisponibles = await _context.Articulos.ToListAsync();
+            ViewBag.ArticulosDisponibles = await _context.Articulos
+                                             .Where(a => a.Activo)
+                                             .ToListAsync();
 
             return View(pedido);
         }

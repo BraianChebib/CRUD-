@@ -1,0 +1,54 @@
+﻿@model CRUD.Models.Proveedor
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Nuevo Proveedor - SIGPRO";
+}
+
+<div class="modulo-contenedor">
+    <div class="modulo-header">
+        <h1>Nuevo Proveedor</h1>
+    </div>
+
+    <div class="barra-herramientas" style="justify-content: flex-end;">
+        <a href="@Url.Action("Proveedores", "Admin")" class="btn-secundario">Volver a Proveedores</a>
+    </div>
+
+    <div class="tabla-tarjeta" style="padding: 24px; max-width: 700px; margin-top: 20px;">
+        <form action="@Url.Action("CrearProveedor", "Admin")" method="post" style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-weight: 500;">Nombre Comercial</label>
+                <input type="text" name="Nombre" required placeholder="Ej: Ferretería Norte"
+                       style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit;" />
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-weight: 500;">Razón Social</label>
+                <input type="text" name="RazonSocial" required placeholder="Ej: Norte Materiales S.R.L."
+                       style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit;" />
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-weight: 500;">CUIT</label>
+                <input type="text" name="Cuit" required placeholder="Ej: 30-71234567-8"
+                       style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit;" />
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-weight: 500;">Mail</label>
+                <input type="email" name="Mail" required placeholder="contacto@proveedor.com"
+                       style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit;" />
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px; grid-column: span 2;">
+                <label style="font-weight: 500;">Teléfono</label>
+                <input type="text" name="Telefono" required placeholder="Ej: 381-4551234"
+                       style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit;" />
+            </div>
+
+            <div style="grid-column: span 2; display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
+                <a href="@Url.Action("Proveedores", "Admin")" class="btn-secundario">Cancelar</a>
+                <button type="submit" class="btn-principal">Guardar Proveedor</button>
+            </div>
+        </form>
+    </div>
+</div>

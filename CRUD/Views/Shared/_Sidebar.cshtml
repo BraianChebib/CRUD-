@@ -49,19 +49,16 @@
 
         @if (User.IsInRole("Administracion"))
         {
-            // Apunta a ProveedorController
-            <a href="@Url.Action("Index", "Proveedor")"
-               class="@(controladorActual == "Proveedor" ? "menu-activo" : "")">
+            <a href="@Url.Action("Proveedores", "Admin")"
+               class="@(controladorActual == "Admin" && accionActual == "Proveedores" ? "menu-activo" : "")">
                 Proveedores
             </a>
-            // Apunta a UserController
-            <a href="@Url.Action("Index", "User")"
-               class="@(controladorActual == "User" ? "menu-activo" : "")">
+            <a href="@Url.Action("Usuarios", "Admin")"
+               class="@(controladorActual == "Admin" && accionActual == "Usuarios" ? "menu-activo" : "")">
                 Usuarios
             </a>
-            // Apunta a ArticuloController
-            <a href="@Url.Action("Index", "Articulo")"
-               class="@(controladorActual == "Articulo" ? "menu-activo" : "")">
+            <a href="@Url.Action("Articulos", "Admin")"
+               class="@(controladorActual == "Admin" && accionActual == "Articulos" ? "menu-activo" : "")">
                 Artículos
             </a>
         }

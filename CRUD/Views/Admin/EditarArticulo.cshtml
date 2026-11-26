@@ -1,0 +1,70 @@
+﻿@model CRUD.Models.Articulo
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = $"Editar {Model.Nombre} - SIGPRO";
+}
+
+<div class="modulo-contenedor">
+    <div class="modulo-header">
+        <h1>Editar Artículo #@Model.Id.ToString("D3")</h1>
+    </div>
+
+    <div class="barra-herramientas" style="justify-content: flex-end;">
+        <a href="@Url.Action("Articulos", "Admin")" class="btn-secundario">Volver a Artículos</a>
+    </div>
+
+    <div class="tabla-tarjeta" style="padding: 24px; max-width: 700px; margin-top: 20px;">
+        <form action="@Url.Action("EditarArticulo", "Admin")" method="post" style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+            <input type="hidden" name="Id" value="@Model.Id" />
+
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-weight: 500;">Nombre</label>
+                <input type="text" name="Nombre" value="@Model.Nombre" required
+                       style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit;" />
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-weight: 500;">Unidad de Medida</label>
+                <input type="text" name="UnidadMedida" value="@Model.UnidadMedida" required
+                       style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit;" />
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px; grid-column: span 2;">
+                <label style="font-weight: 500;">Descripción</label>
+                <textarea name="Descripcion" rows="3" required
+                          style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit; font-family: inherit; resize: vertical;">@Model.Descripcion</textarea>
+            </div>
+
+            <div style="grid-column: span 2; display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <button type="button" id="btn-abrir-eliminar" class="btn-secundario" style="border-color: #F87171; color: #F87171;">
+                    Eliminar Artículo
+                </button>
+                <button type="submit" class="btn-principal">Confirmar Cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Pop-up de confirmación -->
+<div id="modal-eliminar" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center;">
+    <div class="tabla-tarjeta" style="max-width: 420px; width: 90%; padding: 24px; text-align: center;">
+        <h3 style="margin-bottom: 12px; color: #F87171;">¿Eliminar Artículo?</h3>
+        <p style="margin-bottom: 20px;">
+            Estás por eliminar permanentemente <strong>@Model.Nombre</strong> de la lista activa.
+            Los pedidos y órdenes históricas no se verán afectados.
+        </p>
+        <form method="post" action="@Url.Action("EliminarArticulo", "Admin")" style="display:flex; gap:12px; justify-content:center;">
+            <input type="hidden" name="id" value="@Model.Id" />
+            <button type="button" id="btn-cancelar-modal" class="btn-secundario">Cancelar</button>
+            <button type="submit" class="btn-principal" style="background-color: #DC2626;">Sí, Eliminar</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const modal = document.getElementById("modal-eliminar");
+        document.getElementById("btn-abrir-eliminar").addEventListener("click", () => modal.style.display = "flex");
+        document.getElementById("btn-cancelar-modal").addEventListener("click", () => modal.style.display = "none");
+    </script>
+}

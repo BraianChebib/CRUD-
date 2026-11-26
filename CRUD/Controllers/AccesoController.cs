@@ -28,7 +28,7 @@ namespace CRUD.Controllers
             if (!ModelState.IsValid) return View(model);
 
             var usuarioEncontrado = _context.Users
-                .FirstOrDefault(u => u.Dni == model.Dni && u.Clave == model.Clave);
+                .FirstOrDefault(u => u.Dni == model.Dni && u.Clave == model.Clave && u.Activo);
 
             if (usuarioEncontrado != null)
             {

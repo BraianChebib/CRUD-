@@ -7,6 +7,7 @@ namespace CRUD.Models
         public string Dni {get; set;} = string.Empty;
         public string Rol {get; set;} = string.Empty;
         public string Clave { get; set; } = string.Empty;
+        public bool Activo { get; set; } = true;
 
         public List<Pedido> Pedidos {get; set;} = new();
         public List<OrdenCompra> OrdenesCompra {get; set;} = new();

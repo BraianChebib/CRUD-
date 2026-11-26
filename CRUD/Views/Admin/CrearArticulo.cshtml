@@ -1,0 +1,42 @@
+﻿@model CRUD.Models.Articulo
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Nuevo Artículo - SIGPRO";
+}
+
+<div class="modulo-contenedor">
+    <div class="modulo-header">
+        <h1>Nuevo Artículo</h1>
+    </div>
+
+    <div class="barra-herramientas" style="justify-content: flex-end;">
+        <a href="@Url.Action("Articulos", "Admin")" class="btn-secundario">Volver a Artículos</a>
+    </div>
+
+    <div class="tabla-tarjeta" style="padding: 24px; max-width: 700px; margin-top: 20px;">
+        <form action="@Url.Action("CrearArticulo", "Admin")" method="post" style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-weight: 500;">Nombre</label>
+                <input type="text" name="Nombre" required placeholder="Ej: Tornillo Hexagonal 1/2"
+                       style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit;" />
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-weight: 500;">Unidad de Medida</label>
+                <input type="text" name="UnidadMedida" required placeholder="Ej: Unidad, Kg, Metro, Caja"
+                       style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit;" />
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px; grid-column: span 2;">
+                <label style="font-weight: 500;">Descripción</label>
+                <textarea name="Descripcion" rows="3" required placeholder="Especificaciones técnicas o detalles..."
+                          style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: transparent; color: inherit; font-family: inherit; resize: vertical;"></textarea>
+            </div>
+
+            <div style="grid-column: span 2; display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
+                <a href="@Url.Action("Articulos", "Admin")" class="btn-secundario">Cancelar</a>
+                <button type="submit" class="btn-principal">Guardar Artículo</button>
+            </div>
+        </form>
+    </div>
+</div>

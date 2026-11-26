@@ -74,11 +74,14 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // 1. Array de artículos desde C#
-            const articulosDisibles = [
-                @foreach (var art in Model) {
-                    <text>{ id: @art.Id, nombre: "@Html.Raw(art.Nombre)", unidad: "@Html.Raw(art.UnidadMedida)" },</text>
-                }
-            ];
+            const articulosDisibles = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                    Model.Select(a => new
+                    {
+                            id = a.Id,
+                            nombre = a.Nombre,
+                            unidad = a.UnidadMedida
+                     })
+             ));
 
             // 2. Elementos del DOM (Declarados al inicio para evitar errores de referencia)
             const inputArticulo = document.getElementById("input-articulo");
